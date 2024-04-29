@@ -1,0 +1,17 @@
+$smBreakpoint: 500px;
+$mdBreakpoint: 768px;
+$lgBreakpoint: 1024px;
+$asideWidth: 200px;
+
+$primary: #1ed38d;
+$secondary: #333333;
+$gray: #999999;
+
+html body {
+    margin: 0;
+}
+
+/** Helper */
+.hide {
+    display: none;
+}
