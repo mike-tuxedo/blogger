@@ -33,7 +33,7 @@
                 <div transition:slide={{ duration: 200 }}>
                     <a href="/">home</a>
                     <a href="/posts">posts</a>
-                    <a href="/posts/test">post test</a>
+                    <a href="/posts/test">post 404 test</a>
                     <a href="/login">login</a>
                 </div>
             {/if}
