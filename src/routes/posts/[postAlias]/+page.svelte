@@ -8,69 +8,33 @@
 
     /** @type {import('./$types').PageData} */
     export let data;
-	const isNewPost = !data.post;
-    const content = !isNewPost ? data.post.publishedContent.split("<!-- divider -->") : [];
-	let postName = '';
-	let postTitle = '';
-	let postpublished = '0';
-	let postTeaserImage = '';
-	let postTeaserText = '';
-	let postDraftContent = '';
-	let postPublishedContent = '';
-    $: if (isNewPost && content.length) data.post.publishedContent = content.join("<!-- divider -->");
+    const isNewPost = !data.post;
+    const content = !isNewPost
+        ? data.post.publishedContent.split("<!-- divider -->")
+        : [];
+    let postHeadline = data.post ? data.post.headline : "";
+    let postAlias = data.post ? data.post.alias : "";
+    let postPublished = data.post ? !!data.post.published : false;
+    let postImage = data.post ? data.post.image : "/mountains.webp";
+    let postTeaserText = data.post ? data.post.teaserText : "";
+    let postDraftContent = data.post ? data.post.draftContent : "";
+    let postPublishedContent = data.post ? data.post.publishedContent : "";
 
-	const createPost = async () => {
-		const post = {
-			name: postName,
-            alias: postTitle,
-            published: postpublished,
-            teaserImage: postTeaserImage,
-            teaserText: postTeaserText,
-            draftContent: postDraftContent,
-            publishedContent: postPublishedContent,
-        }
+    $: if (isNewPost && content.length)
+        data.post.publishedContent = content.join("<!-- divider -->");
 
-		try {
-			console.log(JSON.stringify(post));
-            const response = await fetch(
-                "https://blogger-server.mike.fm-media-staging.at/post",
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    method: "POST",
-                    body: JSON.stringify(post),
-                }
-            );
-            if (response.ok) {
-                console.log("post erstellt");
-            } else {
-                const errorText = await response.text();
-                console.error(
-                    `Error fetching data: ${response.status}`,
-                    errorText
-                );
-                throw new Error(
-                    `Error fetching data: ${response.status} ${errorText}`
-                );
-            }
-        } catch (error) {
-            console.error("Error in JSON handling: ", error);
-        }
-	}
     const savePost = async () => {
         const post = {
-			name: data.post.name,
-            alias: data.post.alias,
-            published: data.post.published,
-            teaserImage: data.post.teaserImage,
-            teaserText: data.post.teaserImage,
+            headline: postHeadline,
+            alias: postAlias,
+            published: postPublished,
+            image: postImage,
             draftContent: content.join("<!-- divider -->"),
             publishedContent: content.join("<!-- divider -->"),
         };
 
         try {
-			console.log(JSON.stringify(post));
+            console.log(JSON.stringify(post));
             const response = await fetch(
                 "https://blogger-server.mike.fm-media-staging.at/post",
                 {
@@ -97,17 +61,42 @@
             console.error("Error in JSON handling: ", error);
         }
     };
+
+    $: if (postHeadline) {
+        postAlias = postHeadline
+            .replaceAll(" ", "-")
+            .replaceAll("\n", "-")
+            .toLowerCase();
+    }
 </script>
 
-<button on:click={savePost}>save post</button>
-<button on:click={createPost}>create post</button>
 
-{#if isNewPost}
-<input type="text" name="name" placeholder="Titel" bind:value={postName}>
-<input type="text" name="alias" placeholder="alias" bind:value={postTitle}>
-<input type="text" name="teaserImage" placeholder="Teaserbild" bind:value={postTeaserImage}>
-<input type="text" name="teaserText" placeholder="Teasertext" bind:value={postTeaserText}>
-<input type="checkbox" bind:checked={postpublished}>
+<div>
+    <button on:click={() => goto('/posts')}>zurück</button>
+    <button on:click={savePost}>save post</button>
+</div>
+
+{#if $user}
+    <input
+        type="text"
+        name="alias"
+        placeholder="alias"
+        bind:value={postAlias}
+    />
+    <input
+        type="text"
+        name="image"
+        placeholder="Bild"
+        bind:value={postImage}
+    />
+    <textarea
+        class="h1"
+        type="text"
+        name="headline"
+        placeholder="Headline"
+        bind:value={postHeadline}
+    />
+    <input type="checkbox" bind:checked={postPublished} />
 {/if}
 
 {#if $user && content.length}
@@ -126,5 +115,13 @@
         {@html content.join("")}
     </div>
 {:else}
-    {@html data.post ? data.post.publishedContent : ''}
+    {#if data.post}<img src={data.post.image} />{/if}
+    {#if data.post}<h1>{data.post.headline}</h1>{/if}
+    {@html data.post ? data.post.publishedContent : ""}
 {/if}
+
+<style>
+    textarea {
+        width: 100%;
+    }
+</style>

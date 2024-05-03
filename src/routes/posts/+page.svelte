@@ -1,17 +1,16 @@
 <script>
+    import { goto } from '$app/navigation';
     import { user } from '$lib/store.js';
 
 	/** @type {import('./$types').PageData} */
 	export let data;
 
-    console.log(data);
     const saveDummyPost = async () => {
         const post = {
-            name: "Post1",
+            headline: "Post1",
             alias: "post1",
-            published: "1",
-            teaserImage: "/favicon.png",
-            teaserText: "Post 1 Teasertext",
+            published: true,
+            image: "/favicon.png",
             draftContent: "<p>test</p>",
             publishedContent: "<p>test</p>",
         };
@@ -46,33 +45,22 @@
     };
 </script>
 
-<button on:click={saveDummyPost}>save dummy post</button>
-
 
 <h1>Posts</h1>
-<nav class="posts">
+<nav class="nav-posts">
     {#if $user}
-    <a class="post" href="/posts/new" >
+    <button on:click={saveDummyPost}>save dummy post</button>
+    <a class="new" href="/posts/new" >
         <div>+</div>
     </a>
     {/if}
     {#each data.posts as post}
     <a class="post" href="/posts/{post.alias}" >
-        <img src="{post.teaserImage}"/>
-        <div>{post.teaserText}</div>
+        <img src="{post.image}"/>
+        <div>{post.headline}</div>
     </a>
     {/each}
 </nav>
 
 <style lang="scss">
-    .posts {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 20px;
-    }
-    .post {
-        display: flex;
-        flex-direction: column;
-        border: 1px solid $gray;
-    }
 </style>

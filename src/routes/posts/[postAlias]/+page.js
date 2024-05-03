@@ -1,15 +1,20 @@
 import { error } from '@sveltejs/kit';
+import { get } from "svelte/store";
+import { user } from "$lib/store.js";
 
 /** @type {import('./$types').PageLoad} */
 export async function load({ fetch, params }) {
-    console.log(params);
-
     let post = null;
+    const _user = get(user);
+	let url = `https://blogger-server.mike.fm-media-staging.at/posts?alias=${params.postAlias}`;
+	if (!_user) {
+		url += '&published=1'
+	}
 
     if (params.postAlias === 'new') {
         post = null;
     } else {
-        const response = await fetch(`https://blogger-server.mike.fm-media-staging.at/posts?alias=${params.postAlias}`);
+        const response = await fetch(url);
         if (!response.ok) {
             // Hier musst du auf response.status als Zahl prüfen, nicht als String
             if (response.status === 404) {

@@ -12,6 +12,13 @@
         showMenu = innerWidth >= 768 ? true : showMenu;
         showMenuBtn = innerWidth >= 768 ? false : true;
     }
+
+    let mainClass;
+    $: switch ($page.url.pathname) {
+            case '/posts': mainClass = 'posts'; break;
+            case '/': mainClass = 'home'; break;
+            default: mainClass = 'post-detail'; break;
+        }
 </script>
 
 <svelte:window bind:innerWidth />
@@ -23,23 +30,23 @@
 {/if}
 <div class="page">
     {#if $page.url.pathname !== "/login"}
-        <aside>
-            {#if showMenuBtn}
-                <button class="menu" on:click={() => (showMenu = !showMenu)}
-                    >menü</button
-                >
-            {/if}
+        {#if showMenuBtn}
+            <button class="menu" on:click={() => (showMenu = !showMenu)}
+                >menü</button
+            >
+        {/if}
+        <nav class="nav-main">
             {#if showMenu}
                 <div transition:slide={{ duration: 200 }}>
                     <a href="/">home</a>
                     <a href="/posts">posts</a>
-                    <a href="/posts/test">post 404 test</a>
+                    <a href="/posts/test" data-sveltekit-preload-data="off">post 404 test</a>
                     <a href="/login">login</a>
                 </div>
             {/if}
-        </aside>
+        </nav>
     {/if}
-    <main>
+    <main class="{mainClass}">
         <slot />
     </main>
 </div>
@@ -50,37 +57,5 @@
         z-index: 100;
         top: 20px;
         right: 20px;
-    }
-    .page {
-        min-height: 100vh;
-        max-width: $lgBreakpoint;
-        width: 100%;
-        margin: 0 auto;
-        padding: 20px;
-        box-sizing: border-box;
-
-        aside {
-            div {
-                display: grid;
-                grid-template-columns: 1fr;
-                border: 1px solid $gray;
-                border-radius: 10px;
-                padding: 10px;
-                margin-right: 20px;
-            }
-        }
-
-        main {
-            width: 100%;
-        }
-
-        @media (min-width: $mdBreakpoint) {
-            display: flex;
-            justify-content: center;
-
-            aside {
-                min-width: $asideWidth;
-            }
-        }
     }
 </style>
