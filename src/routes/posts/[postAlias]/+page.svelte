@@ -4,57 +4,62 @@
     import Grid from "$lib/Grid.svelte";
     import Image from "$lib/Image.svelte";
     import Text from "$lib/Text.svelte";
-    import { user } from "$lib/store.js";
+    import { user, baseurl } from "$lib/store.js";
+    import { slide } from "svelte/transition";
 
     /** @type {import('./$types').PageData} */
     export let data;
-    const isNewPost = !data.post;
-    const content = !isNewPost
-        ? data.post.publishedContent.split("<!-- divider -->")
-        : [];
-    let postHeadline = data.post ? data.post.headline : "";
-    let postAlias = data.post ? data.post.alias : "";
-    let postPublished = data.post ? !!data.post.published : false;
-    let postImage = data.post ? data.post.image : "/mountains.webp";
-    let postTeaserText = data.post ? data.post.teaserText : "";
-    let postDraftContent = data.post ? data.post.draftContent : "";
-    let postPublishedContent = data.post ? data.post.publishedContent : "";
+    const isnew = !Object.keys(data).length;
+    console.log(!Object.keys(data).length);
+    let postHeadline = !isnew ? data.headline : "";
+    let postAlias = !isnew ? data.alias : "";
+    let postCreated = !isnew ? data.created : null;
+    let postPublished = !isnew ? !!data.published : false;
+    let postImage = !isnew ? data.image : "/mountains.webp";
+    let postDraftContent = !isnew ? data.draftContent : "";
+    let postPublishedContent = !isnew ? data.publishedContent : "";
 
-    $: if (isNewPost && content.length)
-        data.post.publishedContent = content.join("<!-- divider -->");
+    let draft = postDraftContent
+        ? postDraftContent.split("<!-- divider -->")
+        : [];
+
+    $: if (draft) {
+        console.log(draft);
+        postDraftContent = draft.join("<!-- divider -->");
+    }
+
+    $: console.log(postDraftContent);
 
     const savePost = async () => {
         const post = {
             headline: postHeadline,
             alias: postAlias,
+            created: postCreated,
             published: postPublished,
             image: postImage,
-            draftContent: content.join("<!-- divider -->"),
-            publishedContent: content.join("<!-- divider -->"),
+            draftContent: postDraftContent,
+            publishedContent: postDraftContent,
         };
 
         try {
             console.log(JSON.stringify(post));
-            const response = await fetch(
-                "https://blogger-server.mike.fm-media-staging.at/post",
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    method: "POST",
-                    body: JSON.stringify(post),
-                }
-            );
+            const response = await fetch(`${$baseurl}/post.php`, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                method: "POST",
+                body: JSON.stringify(post),
+            });
             if (response.ok) {
                 console.log("post erstellt");
             } else {
                 const errorText = await response.text();
                 console.error(
                     `Error fetching data: ${response.status}`,
-                    errorText
+                    errorText,
                 );
                 throw new Error(
-                    `Error fetching data: ${response.status} ${errorText}`
+                    `Error fetching data: ${response.status} ${errorText}`,
                 );
             }
         } catch (error) {
@@ -68,27 +73,46 @@
             .replaceAll("\n", "-")
             .toLowerCase();
     }
+
+    let showElementPopup = false;
+    const addNewElement = (el) => {
+        showElementPopup = false;
+
+        if (el === "text") {
+            draft = [...draft, ""];
+        } else if (el === "image") {
+            draft = [...draft, '<img src="/favicon.png">'];
+            // draft += '<!-- divider --><img src="/favicon.php">';
+        } else if (el === "button") {
+            draft = [...draft, "<button>Button</button>"];
+            // draft += '<!-- divider --><button>Button</button>';
+        } else if (el === "grid") {
+            draft = [...draft, '<div class="grid"></div>'];
+            // draft += '<!-- divider --><div class="grid"></div>';
+        }
+    };
 </script>
 
-
 <div>
-    <button on:click={() => goto('/posts')}>zurück</button>
+    <button on:click={() => goto("/posts")}>zurück</button>
     <button on:click={savePost}>save post</button>
 </div>
 
 {#if $user}
-    <input
-        type="text"
-        name="alias"
-        placeholder="alias"
-        bind:value={postAlias}
-    />
-    <input
-        type="text"
-        name="image"
-        placeholder="Bild"
-        bind:value={postImage}
-    />
+    <label for="">
+        <span>published</span>
+        <input type="checkbox" bind:checked={postPublished} />
+    </label><br>
+    <label for="">
+        https://yourdomain.com/posts/
+        <input
+            type="text"
+            name="alias"
+            placeholder="alias"
+            bind:value={postAlias}
+        />
+    </label>
+    <Image bind:str={postImage} />
     <textarea
         class="h1"
         type="text"
@@ -96,11 +120,7 @@
         placeholder="Headline"
         bind:value={postHeadline}
     />
-    <input type="checkbox" bind:checked={postPublished} />
-{/if}
-
-{#if $user && content.length}
-    {#each content as str}
+    {#each draft as str}
         {#if str.substring(0, 4) === "<img"}
             <Image bind:str />
         {:else if str.substring(0, 4) === "<but"}
@@ -111,13 +131,26 @@
             <Text bind:str />
         {/if}
     {/each}
-    <div class="copyToSave hide">
-        {@html content.join("")}
-    </div>
+    <button on:click={() => (showElementPopup = !showElementPopup)}>+</button>
+    {#if showElementPopup}
+        <div class="elements" transition:slide>
+            <div class="text" on:click={() => addNewElement("text")}>Text</div>
+            <div class="image" on:click={() => addNewElement("image")}>
+                Image
+            </div>
+            <div class="button" on:click={() => addNewElement("button")}>
+                Button
+            </div>
+            <div class="grid" on:click={() => addNewElement("grid")}>Grid</div>
+        </div>
+    {/if}
+    <!-- <div class="copyToSave hide">
+        {@html postDraftContent}
+    </div> -->
 {:else}
-    {#if data.post}<img src={data.post.image} />{/if}
-    {#if data.post}<h1>{data.post.headline}</h1>{/if}
-    {@html data.post ? data.post.publishedContent : ""}
+    <img src={postImage} />
+    <h1>{postHeadline}</h1>
+    {@html postPublishedContent}
 {/if}
 
 <style>

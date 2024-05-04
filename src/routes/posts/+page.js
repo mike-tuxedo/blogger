@@ -1,11 +1,11 @@
 import { get } from "svelte/store";
-import { user } from "$lib/store.js";
+import { user, baseurl } from "$lib/store.js";
 
 /** @type {import('./$types').PageLoad} */
 export async function load({ fetch, params }) {
 	let posts = [];
 	const _user = get(user);
-	let url = "https://blogger-server.mike.fm-media-staging.at/posts";
+	let url = `${get(baseurl)}/posts.php`;
 	if (!_user) {
 		url += '?published=1';
 	}

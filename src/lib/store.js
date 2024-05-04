@@ -14,3 +14,5 @@ const useLocalStorage = (store, key) => {
 
 export const user = writable(null);
 useLocalStorage(user, 'user');
+
+export const baseurl = writable('https://blogger-server.mike.fm-media-staging.at/api');

@@ -4,7 +4,7 @@
 
     const login = () => {
         $user = 'Mike';
-        goto('/');
+        goto('/posts');
     }
 </script>
 

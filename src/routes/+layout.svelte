@@ -28,28 +28,26 @@
         <div class="logout" on:click={() => ($user = null)}>logout</div>
     </div>
 {/if}
-<div class="page">
-    {#if $page.url.pathname !== "/login"}
-        {#if showMenuBtn}
-            <button class="menu" on:click={() => (showMenu = !showMenu)}
-                >menü</button
-            >
+{#if $page.url.pathname !== "/login"}
+{#if showMenuBtn}
+    <button class="menu" on:click={() => (showMenu = !showMenu)}
+        >menü</button
+    >
+{/if}
+<nav class="nav-main">
+        {#if showMenu}
+            <div transition:slide={{ duration: 200 }}>
+                <a href="/">home</a>
+                <a href="/posts">posts</a>
+                <a href="/posts/test" data-sveltekit-preload-data="off">post 404 test</a>
+                <a href="/login">login</a>
+            </div>
         {/if}
-        <nav class="nav-main">
-            {#if showMenu}
-                <div transition:slide={{ duration: 200 }}>
-                    <a href="/">home</a>
-                    <a href="/posts">posts</a>
-                    <a href="/posts/test" data-sveltekit-preload-data="off">post 404 test</a>
-                    <a href="/login">login</a>
-                </div>
-            {/if}
-        </nav>
-    {/if}
-    <main class="{mainClass}">
-        <slot />
-    </main>
-</div>
+    </nav>
+{/if}
+<main class="content {mainClass}">
+    <slot />
+</main>
 
 <style lang="scss">
     .user {
