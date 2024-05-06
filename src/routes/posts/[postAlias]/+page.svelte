@@ -10,7 +10,6 @@
     /** @type {import('./$types').PageData} */
     export let data;
     const isnew = !Object.keys(data).length;
-    console.log(!Object.keys(data).length);
     let postHeadline = !isnew ? data.headline : "";
     let postAlias = !isnew ? data.alias : "";
     let postCreated = !isnew ? data.created : null;
@@ -24,11 +23,8 @@
         : [];
 
     $: if (draft) {
-        console.log(draft);
         postDraftContent = draft.join("<!-- divider -->");
     }
-
-    $: console.log(postDraftContent);
 
     const savePost = async () => {
         const post = {
@@ -82,13 +78,10 @@
             draft = [...draft, ""];
         } else if (el === "image") {
             draft = [...draft, '<img src="/favicon.png">'];
-            // draft += '<!-- divider --><img src="/favicon.php">';
         } else if (el === "button") {
             draft = [...draft, "<button>Button</button>"];
-            // draft += '<!-- divider --><button>Button</button>';
         } else if (el === "grid") {
             draft = [...draft, '<div class="grid"></div>'];
-            // draft += '<!-- divider --><div class="grid"></div>';
         }
     };
 </script>
@@ -99,11 +92,11 @@
 </div>
 
 {#if $user}
-    <label for="">
+    <label class="mb-2 inline-block">
         <span>published</span>
         <input type="checkbox" bind:checked={postPublished} />
-    </label><br>
-    <label for="">
+    </label><br />
+    <label class="mb-5 inline-block">
         https://yourdomain.com/posts/
         <input
             type="text"
@@ -114,7 +107,7 @@
     </label>
     <Image bind:str={postImage} />
     <textarea
-        class="h1"
+        class="h1 mb-2"
         type="text"
         name="headline"
         placeholder="Headline"
@@ -144,9 +137,6 @@
             <div class="grid" on:click={() => addNewElement("grid")}>Grid</div>
         </div>
     {/if}
-    <!-- <div class="copyToSave hide">
-        {@html postDraftContent}
-    </div> -->
 {:else}
     <img src={postImage} />
     <h1>{postHeadline}</h1>

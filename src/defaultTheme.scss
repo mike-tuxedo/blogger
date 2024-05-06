@@ -1,0 +1,99 @@
+@import './variables.scss';
+
+/** Standardtheme */
+body.defaultTheme {
+    .page {
+        backdrop-filter: blur(4px);
+        padding: 0 0 40px 0;
+
+        .nav-main {
+            position: sticky;
+            top: 0;
+            display: flex;
+            justify-content: center;
+            max-width: $lgBreakpoint;
+            line-height: 80px;
+
+            @media (max-width: 767px) {
+                div {
+                    display: grid;
+                    grid-template-columns: 1fr;
+                    border: 1px solid $gray;
+                    border-radius: 10px;
+                    padding: 10px;
+                    margin-right: 20px;
+                }
+            }
+
+            a {
+                text-decoration: none;
+                color: white;
+                padding: 12px 20px;
+            }
+        }
+
+        .content {
+            min-height: 100vh;
+            max-width: $lgBreakpoint;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #fff;
+
+            .nav-posts {
+                display: grid;
+                gap: 20px;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+
+                .new {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    aspect-ratio: 1/1;
+                }
+
+                .post {
+                    display: flex;
+                    flex-direction: column;
+                    max-width: calc(100vw - 40px);
+
+                    img {
+                        aspect-ratio: 1/1;
+                        object-fit: cover;
+                    }
+
+                    div {
+                        padding: 5px;
+                    }
+                }
+
+                .post,
+                .new {
+                    position: relative;
+                    border: 1px solid $gray;
+                    text-decoration: none;
+                    color: #000;
+
+                    &:before {
+                        content: '';
+                        display: block;
+                        position: absolute;
+                        z-index: 1;
+                        pointer-events: none;
+                        background: transparent;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        transition: all 0.3s;
+                    }
+
+                    &:hover:before {
+                        background: rgba(0, 0, 0, 0.2);
+                    }
+                }
+            }
+        }
+    }
+}

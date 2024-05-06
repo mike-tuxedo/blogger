@@ -1,4 +1,6 @@
 <script>
+    import "../variables.scss";
+    import "../defaultTheme.scss";
     import "../app.scss";
     import { page } from "$app/stores";
     import { slide } from "svelte/transition";

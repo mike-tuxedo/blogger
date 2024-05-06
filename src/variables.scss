@@ -1,0 +1,44 @@
+$smBreakpoint: 500px;
+$mdBreakpoint: 768px;
+$lgBreakpoint: 1024px;
+$asideWidth: 200px;
+
+$primary: #1ed38d;
+$secondary: #333333;
+$gray: #999999;
+
+.noto-sans-100 {
+    font-family: "Noto Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: light;
+    font-variation-settings:
+        "wdth" 100;
+}
+
+.noto-sans-400 {
+    font-family: "Noto Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings:
+        "wdth" 400;
+}
+
+.noto-sans-600 {
+    font-family: "Noto Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: bold;
+    font-variation-settings:
+        "wdth" 600;
+}
+
+.noto-sans-900 {
+    font-family: "Noto Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 900;
+    font-style: bolder;
+    font-variation-settings:
+        "wdth" 900;
+}
