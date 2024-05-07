@@ -4,6 +4,7 @@
     import Grid from "$lib/Grid.svelte";
     import Image from "$lib/Image.svelte";
     import Text from "$lib/Text.svelte";
+    import AddElementBtn from "$lib/AddElementBtn.svelte";
     import { user, baseurl } from "$lib/store.js";
     import { slide } from "svelte/transition";
 
@@ -23,6 +24,7 @@
         : [];
 
     $: if (draft) {
+        console.log(draft);
         postDraftContent = draft.join("<!-- divider -->");
     }
 
@@ -52,10 +54,10 @@
                 const errorText = await response.text();
                 console.error(
                     `Error fetching data: ${response.status}`,
-                    errorText,
+                    errorText
                 );
                 throw new Error(
-                    `Error fetching data: ${response.status} ${errorText}`,
+                    `Error fetching data: ${response.status} ${errorText}`
                 );
             }
         } catch (error) {
@@ -71,32 +73,38 @@
     }
 
     let showElementPopup = false;
-    const addNewElement = (el) => {
-        showElementPopup = false;
+    const addNewElement = (el, index) => {
+        const currentDraft = draft;
+        console.log('Element', el);
 
         if (el === "text") {
-            draft = [...draft, ""];
+            currentDraft.splice(index + 1, 0, "<div class='text'></div>");
         } else if (el === "image") {
-            draft = [...draft, '<img src="/favicon.png">'];
+            currentDraft.splice(index + 1, 0, "<img class='image' src='/favicon.png'>");
         } else if (el === "button") {
-            draft = [...draft, "<button>Button</button>"];
+            currentDraft.splice(index + 1, 0, "<button class='btn'>Button</button>");
         } else if (el === "grid") {
-            draft = [...draft, '<div class="grid"></div>'];
+            currentDraft.splice(index + 1, 0, "<div class='grid-2'></div>");
         }
+
+        draft = currentDraft;
     };
 </script>
 
-<div>
-    <button on:click={() => goto("/posts")}>zurück</button>
-    <button on:click={savePost}>save post</button>
+<div class="df jcsb aic mb-2">
+    <button on:click={() => goto("/posts")} class="fl">zurück</button>
+    {#if $user}
+        <button on:click={savePost} class="ase">save draft</button>
+        <button on:click={savePost} class="ase">publish</button>
+    {/if}
 </div>
-
 {#if $user}
-    <label class="mb-2 inline-block">
+<div class="mb-2">
+    <label>
         <span>published</span>
         <input type="checkbox" bind:checked={postPublished} />
     </label><br />
-    <label class="mb-5 inline-block">
+    <label>
         https://yourdomain.com/posts/
         <input
             type="text"
@@ -105,7 +113,8 @@
             bind:value={postAlias}
         />
     </label>
-    <Image bind:str={postImage} />
+</div>
+    <Image bind:str={postImage} htmlClass="heroimage"/>
     <textarea
         class="h1 mb-2"
         type="text"
@@ -113,32 +122,24 @@
         placeholder="Headline"
         bind:value={postHeadline}
     />
-    {#each draft as str}
+    <AddElementBtn addNewElement={addNewElement} index={-1}/>
+    {#each draft as str, index}
         {#if str.substring(0, 4) === "<img"}
             <Image bind:str />
+            <AddElementBtn addNewElement={addNewElement} index={index}/>
         {:else if str.substring(0, 4) === "<but"}
             <Button bind:str />
+            <AddElementBtn addNewElement={addNewElement} index={index}/>
+        {:else if str.substring(0, 18) === "<div class='text'>"}
+            <Text bind:str />
+            <AddElementBtn addNewElement={addNewElement} index={index}/>
         {:else if str.substring(0, 4) === "<div"}
             <Grid bind:str />
-        {:else}
-            <Text bind:str />
+            <AddElementBtn addNewElement={addNewElement} index={index}/>
         {/if}
     {/each}
-    <button on:click={() => (showElementPopup = !showElementPopup)}>+</button>
-    {#if showElementPopup}
-        <div class="elements" transition:slide>
-            <div class="text" on:click={() => addNewElement("text")}>Text</div>
-            <div class="image" on:click={() => addNewElement("image")}>
-                Image
-            </div>
-            <div class="button" on:click={() => addNewElement("button")}>
-                Button
-            </div>
-            <div class="grid" on:click={() => addNewElement("grid")}>Grid</div>
-        </div>
-    {/if}
 {:else}
-    <img src={postImage} />
+    {@html postImage}
     <h1>{postHeadline}</h1>
     {@html postPublishedContent}
 {/if}

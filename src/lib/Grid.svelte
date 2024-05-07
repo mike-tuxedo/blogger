@@ -6,37 +6,47 @@
     import Text from "$lib/Text.svelte";
     
     export let str = "";
-    let draft = str.substring(18, str.length - 6);
+    let draft = str.substring(20, str.length - 6);
     let elements = draft ? draft.split("<!-- coldivider -->") : ['', ''];
+    console.log('Render grid')
 
-    $: console.log('elements', elements);
+    $: if (elements) {
+        console.log('elements', elements, 'draft', draft);
+        draft = elements.join("<!-- coldivider -->");
+        str = `<div class="grid-${elements.length}">`+draft+'</div>';
+    }
 
     const setElement = (index, el) => {
         if (el === "text") {
-            elements[index] = "<p>Dein Text hier</p>";
+            elements[index] = "<div class='text'></div>";
         } else if (el === "image") {
             elements[index] = '<img src="/favicon.png">';
         } else if (el === "button") {
             elements[index] = "<button>Button</button>";
         }
 
-        str = `<div class="grid-${elements.length}">`+elements.join("<!-- coldivider -->")+'</div>';
-        console.log('str', str);
+        draft = elements.join("<!-- coldivider -->");
+        str = `<div class="grid-${elements.length}">`+draft+'</div>';
     };
+
+// const changed = (index, str) => {
+//     elements[index] = str;
+//     draft = elements.join("<!-- coldivider -->");
+//     str = `<div class="grid-${elements.length}">`+draft+'</div>';
+// }
 </script>
 
 <div class="grid-{elements.length}">
     {#if $user}
-        {#each elements as element, index}
+        {#each elements as str, index}
+            <!-- coldivider -->
             <div class="col">
-                {#if element.substring(0, 4) === "<img"}
-                    <Image bind:element />
-                {:else if element.substring(0, 4) === "<but"}
-                    <Button bind:element />
-                {:else if element.substring(0, 4) === "<div"}
-                    <Grid bind:element />
-                {:else if element.substring(0, 4) === "<p"}
-                    <Text bind:element />
+                {#if str.substring(0, 4) === "<img"}
+                    <Image bind:str />
+                {:else if str.substring(0, 4) === "<but"}
+                    <Button bind:str />
+                {:else if str.substring(0, 18) === "<div class='text'>"}
+                    <Text bind:str />
                 {:else}
                     <div
                         class="text"

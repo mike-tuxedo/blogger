@@ -2,8 +2,8 @@
     import Tiptap from "$lib/Tiptap.svelte";
 
     export let str = "";
+    let content = str;
+    $: str = `<div class='text'>${content}</div>`;
 </script>
 
-<div>
-    <Tiptap bind:content={str}/>
-</div>
+<Tiptap bind:content={content}/>

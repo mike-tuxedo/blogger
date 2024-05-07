@@ -12,99 +12,194 @@ html body {
     background-attachment: fixed;
 
     /** Defaults */
-    img {
+    img, .image {
         max-width: 100%;
         width: 100%;
     }
-    button {
-        background-color: $primary;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 3px;
-        border: none;
-        cursor: pointer;
 
-        &:hover {
-            background-color: $secondary;
-        }
-    }
+    /** Loggedin styling */
+    &.logged-in {
+        main {
+            > textarea {
+                border: none;
 
-    .image {
-        display: contents;
-    }
+                &:hover {
+                    background: rgba(0, 0, 0, 0.05);
+                }
+            }
+            > div, > textarea, > img {
+                position: relative;
+                width: 100%;
 
-    .dropzone {
-        line-height: 100px;
-        padding: 0 !important;
-    }
+                &:before {
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    z-index: 1;
+                    pointer-events: none;
+                    background: transparent;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    transition: all 0.3s;
+                }
 
-    .loading {
-        position: absolute;
-        z-index: 1;
-    }
-
-    /** Texteditor */
-    .tiptap {
-        >*+* {
-            margin-top: 0.75em;
-        }
-
-        ul,
-        ol {
-            padding: 0 1rem;
-        }
-
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            line-height: 1.1;
-        }
-
-        code {
-            background-color: rgba(#616161, 0.1);
-            color: #616161;
-        }
-
-        pre {
-            background: #0D0D0D;
-            color: #FFF;
-            font-family: 'JetBrainsMono', monospace;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-
-            code {
-                color: inherit;
-                padding: 0;
-                background: none;
-                font-size: 0.8rem;
+                &:hover {
+                    &:before {
+                        background: rgba(0, 0, 0, 0.05);
+                    }
+                }
+            }
+            > button {
+                margin-bottom: 20px;
             }
         }
-
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        blockquote {
-            padding-left: 1rem;
-            border-left: 2px solid rgba(#0D0D0D, 0.1);
-        }
-
-        hr {
+        button {
+            background-color: $primary;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 3px;
             border: none;
-            border-top: 2px solid rgba(#0D0D0D, 0.1);
-            margin: 2rem 0;
+            cursor: pointer;
+    
+            &:hover {
+                background-color: $secondary;
+            }
+        }
+        textarea {
+            border: 1px solid $lightGray;
+            resize: none;
+            margin: 0;
+        }
+        .loading {
+            background-color: $primary; 
+        }
+    
+        .dropzone {
+            background-color: white;
+            line-height: 100px;
+            padding: 0 !important;
+            border: none !important;
+            cursor: pointer;
+
+            .image {
+                display: inline-flex;
+            }
+        }
+    
+        .loading {
+            position: absolute;
+            z-index: 1;
+        }
+    
+        /** Texteditor */
+        .tiptap {
+            >*+* {
+                margin-top: 0.75em;
+            }
+    
+            ul,
+            ol {
+                padding: 0 1rem;
+            }
+    
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6 {
+                line-height: 1.1;
+            }
+    
+            code {
+                background-color: rgba(#616161, 0.1);
+                color: #616161;
+            }
+    
+            pre {
+                background: #0D0D0D;
+                color: #FFF;
+                font-family: 'JetBrainsMono', monospace;
+                padding: 0.75rem 1rem;
+                border-radius: 0.5rem;
+    
+                code {
+                    color: inherit;
+                    padding: 0;
+                    background: none;
+                    font-size: 0.8rem;
+                }
+            }
+    
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+    
+            blockquote {
+                padding-left: 1rem;
+                border-left: 2px solid rgba(#0D0D0D, 0.1);
+            }
+    
+            hr {
+                border: none;
+                border-top: 2px solid rgba(#0D0D0D, 0.1);
+                margin: 2rem 0;
+            }
         }
     }
-
 }
 
 /** Helper */
 .hide {
     display: none;
+}
+.fl {
+    float: left;
+}
+.fr {
+    float: right;
+}
+.df {
+    display: flex;
+}
+.jcc {
+    justify-content: center;
+}
+.jcsb {
+    justify-content: space-between;
+}
+.aic {
+    align-items: center;
+}
+.ase {
+    align-self: flex-end;
+}
+.mb-1 {
+    margin-bottom: 10px;
+}
+.mb-2 {
+    margin-bottom: 20px;
+}
+.mb-3 {
+    margin-bottom: 30px;
+}
+.mb-4 {
+    margin-bottom: 40px;
+}
+.mt-1 {
+    margin-top: 10px;
+}
+.mt-2 {
+    margin-top: 20px;
+}
+.mt-3 {
+    margin-top: 30px;
+}
+.mt-4 {
+    margin-top: 40px;
 }
 .grid {
     display: grid;
@@ -116,5 +211,5 @@ html body {
 }
 .col {
     min-height: 40px;
-    border: 1px solid red;
+    border: 1px solid $lightGray;
 }

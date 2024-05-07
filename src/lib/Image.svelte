@@ -4,6 +4,7 @@
     import { fade } from "svelte/transition";
 
     export let str = "";
+    export let htmlClass = "";
     let loading = false;
 
     let files = {
@@ -34,7 +35,7 @@
                     const data = await response.json(); // Parse JSON response
                     console.log(data);
                     // hier müsste gleich figure mit srcset gemacht werden
-                    str = `<img src="${$baseurl}/uploads/300_${data.filename}" srcset="${$baseurl}/uploads/300_${data.filename} 300w, ${$baseurl}/uploads/600_${data.filename} 600w, ${$baseurl}/uploads/1200_${data.filename} 1200w" alt="${data.filename}" />`;
+                    str = `<img class="${htmlClass}" src="${$baseurl}/uploads/300_${data.filename}" srcset="${$baseurl}/uploads/300_${data.filename} 300w, ${$baseurl}/uploads/600_${data.filename} 600w, ${$baseurl}/uploads/1200_${data.filename} 1200w" alt="${data.filename}" />`;
                     console.log(`${file.name} uploaded successfully`);
                 } else {
                     console.error(`${file.name} upload failed`);
@@ -48,7 +49,6 @@
     };
 
     let preview = "";
-
     function loadPreview(file) {
         const reader = new FileReader();
         reader.onload = function (event) {
@@ -61,7 +61,7 @@
 {#if $user}
     <Dropzone on:drop={handleFilesSelect} bind:files let:files>
         {#if preview}
-            <img class="dropzone-preview" src={preview} transition:fade />
+            <img class="dropzone-preview {htmlClass}" src={preview} transition:fade />
         {:else if str.length}
             <div class="image" transition:fade>{@html str}</div>
         {:else}
@@ -72,7 +72,9 @@
         {/if}
     </Dropzone>
 {:else}
-    <div class="image" transition:fade>{@html str}</div>
+    <div class="image" transition:fade>
+        {@html str}
+    </div>
 {/if}
 
 <style>

@@ -2,25 +2,40 @@
     import "../variables.scss";
     import "../defaultTheme.scss";
     import "../app.scss";
+    import "../normalize.css";
     import { page } from "$app/stores";
     import { slide } from "svelte/transition";
     import { user } from "$lib/store.js";
+    import { onMount } from "svelte";
 
     let showMenu = false;
     let showMenuBtn = true;
     let innerWidth = 0;
+    let body = null;
 
     $: if (innerWidth) {
         showMenu = innerWidth >= 768 ? true : showMenu;
         showMenuBtn = innerWidth >= 768 ? false : true;
     }
 
+    $: if (body) {
+        if ($user) {
+            body.classList.add('logged-in');
+        } else {
+            body.classList.remove('logged-in');
+        }
+    }
+
     let mainClass;
     $: switch ($page.url.pathname) {
-            case '/posts': mainClass = 'posts'; break;
-            case '/': mainClass = 'home'; break;
-            default: mainClass = 'post-detail'; break;
-        }
+        case '/posts': mainClass = 'posts'; break;
+        case '/': mainClass = 'home'; break;
+        default: mainClass = 'post-detail'; break;
+    }
+
+    onMount(() => {
+        body = document.body;
+    })
 </script>
 
 <svelte:window bind:innerWidth />

@@ -1,5 +1,6 @@
 <script>
     import { user } from '$lib/store.js';
+    import { fade } from 'svelte/transition';
 
 	/** @type {import('./$types').PageData} */
 	export let data;
@@ -14,9 +15,9 @@
     </a>
     {/if}
     {#each data.posts as post}
-    <a class="post" href="/posts/{post.alias}" data-post-created={post.created} >
+    <a class="post" href="/posts/{post.alias}" data-post-created={post.created}>
         {@html post.image}
-        <div>{post.headline}</div>
+        <h4>{post.headline}</h4>
     </a>
     {/each}
 </nav>
