@@ -6,7 +6,9 @@
     import Text from "$lib/Text.svelte";
     import AddElementBtn from "$lib/AddElementBtn.svelte";
     import { user, baseurl } from "$lib/store.js";
-    import { slide } from "svelte/transition";
+    import Settings from "$lib/Settings.svelte";
+    import { onMount } from "svelte";
+    import { hotKeyAction } from "svelte-legos";
 
     /** @type {import('./$types').PageData} */
     export let data;
@@ -15,7 +17,7 @@
     let postAlias = !isnew ? data.alias : "";
     let postCreated = !isnew ? data.created : null;
     let postPublished = !isnew ? !!data.published : false;
-    let postImage = !isnew ? data.image : "/mountains.webp";
+    let postImage = !isnew ? data.image : "<img src='/favicon.png'/>";
     let postDraftContent = !isnew ? data.draftContent : "";
     let postPublishedContent = !isnew ? data.publishedContent : "";
 
@@ -24,11 +26,49 @@
         : [];
 
     $: if (draft) {
-        console.log(draft);
         postDraftContent = draft.join("<!-- divider -->");
     }
 
-    const savePost = async () => {
+    const saveDraft = async () => {
+        const post = {
+            headline: postHeadline,
+            alias: postAlias,
+            created: postCreated,
+            published: postPublished,
+            image: postImage,
+            draftContent: postDraftContent,
+            publishedContent: data.publishedContent,
+        };
+
+        try {
+            const response = await fetch(`${$baseurl}/post.php`, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                method: "POST",
+                body: JSON.stringify(post),
+            });
+            if (response.ok) {
+                console.log("post erstellt");
+            } else {
+                const errorText = await response.text();
+                console.error(
+                    `Error fetching data: ${response.status}`,
+                    errorText
+                );
+                throw new Error(
+                    `Error fetching data: ${response.status} ${errorText}`
+                );
+            }
+        } catch (error) {
+            console.error("Error in JSON handling: ", error);
+        }
+    };
+
+    const publishDraft = async () => {
+        postPublished = true;
+        postPublishedContent = postDraftContent;
+
         const post = {
             headline: postHeadline,
             alias: postAlias,
@@ -65,6 +105,45 @@
         }
     };
 
+    const unpublish = async () => {
+        postPublished = false;
+
+        const post = {
+            headline: postHeadline,
+            alias: postAlias,
+            created: postCreated,
+            published: postPublished,
+            image: postImage,
+            draftContent: postDraftContent,
+            publishedContent: postPublishedContent,
+        };
+
+        try {
+            console.log(JSON.stringify(post));
+            const response = await fetch(`${$baseurl}/post.php`, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                method: "POST",
+                body: JSON.stringify(post),
+            });
+            if (response.ok) {
+                console.log("post erstellt");
+            } else {
+                const errorText = await response.text();
+                console.error(
+                    `Error fetching data: ${response.status}`,
+                    errorText
+                );
+                throw new Error(
+                    `Error fetching data: ${response.status} ${errorText}`
+                );
+            }
+        } catch (error) {
+            console.error("Error in JSON handling: ", error);
+        }
+    };
+
     $: if (postHeadline) {
         postAlias = postHeadline
             .replaceAll(" ", "-")
@@ -72,49 +151,86 @@
             .toLowerCase();
     }
 
-    let showElementPopup = false;
     const addNewElement = (el, index) => {
         const currentDraft = draft;
-        console.log('Element', el);
+        console.log("Element", el);
 
         if (el === "text") {
             currentDraft.splice(index + 1, 0, "<div class='text'></div>");
         } else if (el === "image") {
-            currentDraft.splice(index + 1, 0, "<img class='image' src='/favicon.png'>");
+            currentDraft.splice(
+                index + 1,
+                0,
+                "<img class='image' src='/favicon.png'>"
+            );
         } else if (el === "button") {
-            currentDraft.splice(index + 1, 0, "<button class='btn'>Button</button>");
+            currentDraft.splice(
+                index + 1,
+                0,
+                "<button class='btn'>Button</button>"
+            );
         } else if (el === "grid") {
             currentDraft.splice(index + 1, 0, "<div class='grid-2'></div>");
         }
 
         draft = currentDraft;
     };
+
+    let publishedState = "btn-outline";
+    $: if (!postPublished) {
+        publishedState = "btn-outline";
+    } else if (postDraftContent === postPublishedContent && postPublished) {
+        publishedState = "btn-success";
+    } else {
+        publishedState = "btn-warning";
+    }
+
+    onMount(() => {
+        document.body.classList.add("post");
+    });
 </script>
 
-<div class="df jcsb aic mb-2">
-    <button on:click={() => goto("/posts")} class="fl">zurück</button>
-    {#if $user}
-        <button on:click={savePost} class="ase">save draft</button>
-        <button on:click={savePost} class="ase">publish</button>
-    {/if}
-</div>
-{#if $user}
-<div class="mb-2">
-    <label>
-        <span>published</span>
-        <input type="checkbox" bind:checked={postPublished} />
-    </label><br />
-    <label>
-        https://yourdomain.com/posts/
-        <input
-            type="text"
-            name="alias"
-            placeholder="alias"
-            bind:value={postAlias}
+<button class="btn btn-link btn-primary" on:click={() => goto("/posts")} use:hotKeyAction={{ ctrl: true, code: 'Backspace' }}>
+    <svg
+        class="w-5 h-5"
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        fill="none"
+        viewBox="0 0 24 24"
+    >
+        <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="m15 19-7-7 7-7"
         />
+    </svg>
+    back
+</button>
+{#if $user}
+    <div class="controls inline-flex gap-2 fixed top-4 right-5">
+        <button class="btn btn-outline btn-sm" on:click={saveDraft} use:hotKeyAction={{ ctrl: true, code: 'KeyS' }}
+            >Save draft</button
+        >
+        <button class="btn {publishedState} btn-sm" on:click={publishDraft} use:hotKeyAction={{ ctrl: true, code: 'KeyP' }}
+            >Publish draft</button
+        >
+        {#if postPublished}
+            <button class="btn btn-outline btn-sm" on:click={unpublish} use:hotKeyAction={{ ctrl: true, code: 'KeyU' }}
+                >Unpublish</button
+            >
+        {/if}
+        <Settings post={data} />
+    </div>
+
+    <label for="alias">
+        Alias
+        <input type="text" id="alias" bind:value={postAlias} />
     </label>
-</div>
-    <Image bind:str={postImage} htmlClass="heroimage"/>
+    <Image bind:str={postImage} htmlClass="heroimage" />
     <textarea
         class="h1 mb-2"
         type="text"
@@ -122,30 +238,21 @@
         placeholder="Headline"
         bind:value={postHeadline}
     />
-    <AddElementBtn addNewElement={addNewElement} index={-1}/>
+    <AddElementBtn {addNewElement} index={-1} />
     {#each draft as str, index}
         {#if str.substring(0, 4) === "<img"}
             <Image bind:str />
-            <AddElementBtn addNewElement={addNewElement} index={index}/>
         {:else if str.substring(0, 4) === "<but"}
             <Button bind:str />
-            <AddElementBtn addNewElement={addNewElement} index={index}/>
         {:else if str.substring(0, 18) === "<div class='text'>"}
             <Text bind:str />
-            <AddElementBtn addNewElement={addNewElement} index={index}/>
         {:else if str.substring(0, 4) === "<div"}
             <Grid bind:str />
-            <AddElementBtn addNewElement={addNewElement} index={index}/>
         {/if}
+        <AddElementBtn {addNewElement} {index} />
     {/each}
 {:else}
     {@html postImage}
     <h1>{postHeadline}</h1>
     {@html postPublishedContent}
 {/if}
-
-<style>
-    textarea {
-        width: 100%;
-    }
-</style>

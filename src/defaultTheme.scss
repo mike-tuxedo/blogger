@@ -2,10 +2,11 @@
 
 /** Standardtheme */
 body.defaultTheme {
+    &.login main {
+        padding: 0 !important;
+        background-color: transparent !important;
+    }
     .page {
-        backdrop-filter: blur(4px);
-        padding: 0 0 40px 0;
-
         .nav-main {
             display: flex;
             justify-content: center;
@@ -37,10 +38,10 @@ body.defaultTheme {
             margin: 0 auto;
             padding: 20px;
             box-sizing: border-box;
-            background-color: #fff;
+            background-color: #ffffff;
 
             /** Posts */
-            .nav-posts {
+            .posts {
                 display: flex;
                 flex-wrap: wrap;
 
@@ -64,7 +65,7 @@ body.defaultTheme {
                         height: 100%;
                     }
 
-                    div {
+                    div:not(.controls) {
                         padding: 5px;
                     }
                 }
@@ -135,8 +136,8 @@ body.defaultTheme {
             }
 
             /** Post */
-            > div, > textarea, > img {
-                margin-bottom: 20px;
+            > div:not(.controls), > textarea, > img {
+                // margin-bottom: 20px;
             }
             .heroimage {
                 width: 100%;

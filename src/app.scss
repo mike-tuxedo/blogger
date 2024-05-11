@@ -1,3 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 @import './variables.scss';
 
 html,
@@ -12,59 +15,52 @@ html body {
     background-attachment: fixed;
 
     /** Defaults */
+    * {
+        box-sizing: border-box;
+    }
+
     img, .image {
         max-width: 100%;
         width: 100%;
+        margin: 0 !important
     }
 
     /** Loggedin styling */
     &.logged-in {
-        main {
-            > textarea {
-                border: none;
-
-                &:hover {
-                    background: rgba(0, 0, 0, 0.05);
-                }
+        .btn-logout {
+            transform: rotate(180deg);
+        }
+        &.posts {
+            table img {
+                min-width: 100px !important;
+                height: 100px !important;
             }
-            > div, > textarea, > img {
-                position: relative;
-                width: 100%;
+        }
+        &.post {
 
-                &:before {
-                    content: '';
-                    display: block;
-                    position: absolute;
-                    z-index: 1;
-                    pointer-events: none;
-                    background: transparent;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
+            main {
+                > div:not(.controls), > textarea, > img {
+                    border: 1px solid transparent !important;
                     transition: all 0.3s;
-                }
-
-                &:hover {
-                    &:before {
-                        background: rgba(0, 0, 0, 0.05);
+                    position: relative;
+                    width: 100%;
+    
+                    &:hover {
+                        border: 1px solid $gray !important;
                     }
                 }
-            }
-            > button {
-                margin-bottom: 20px;
+                > button {
+                    margin-bottom: 20px;
+                }
             }
         }
         button {
-            background-color: $primary;
-            color: white;
-            padding: 8px 14px;
-            border-radius: 3px;
-            border: none;
-            cursor: pointer;
-    
-            &:hover {
-                background-color: $secondary;
+            &.pure-button-primary {
+                background-color: $primary;
+
+                &:hover {
+                    background-color: $secondary;
+                }
             }
         }
         textarea {
@@ -80,7 +76,6 @@ html body {
             background-color: white;
             line-height: 100px;
             padding: 0 !important;
-            border: none !important;
             cursor: pointer;
 
             .image {

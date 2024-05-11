@@ -2,7 +2,6 @@
     import "../variables.scss";
     import "../defaultTheme.scss";
     import "../app.scss";
-    import "../normalize.css";
     import { page } from "$app/stores";
     import { slide } from "svelte/transition";
     import { user } from "$lib/store.js";
@@ -41,9 +40,11 @@
 <svelte:window bind:innerWidth />
 
 {#if $user}
-    <div class="user">
-        <div class="logout" on:click={() => ($user = null)}>logout</div>
-    </div>
+<button class="btn-logout btn btn-circle btn-outline btn-sm fixed top-4 left-5" on:click={() => ($user = null)}>
+    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H8m12 0-4 4m4-4-4-4M9 4H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h2"/>
+      </svg>
+</button>
 {/if}
 {#if $page.url.pathname !== "/login"}
 {#if showMenuBtn}
@@ -51,7 +52,7 @@
         >menü</button
     >
 {/if}
-<nav class="nav-main">
+    <nav class="nav-main">
         {#if showMenu}
             <div transition:slide={{ duration: 200 }}>
                 <a href="/">home</a>
@@ -62,15 +63,10 @@
         {/if}
     </nav>
 {/if}
-<main class="content {mainClass}">
+<main class="content {mainClass} prose">
     <slot />
 </main>
 
 <style lang="scss">
-    .user {
-        position: fixed;
-        z-index: 100;
-        top: 20px;
-        right: 20px;
-    }
+
 </style>
