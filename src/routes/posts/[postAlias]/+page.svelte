@@ -1,10 +1,7 @@
 <script>
     import { goto } from "$app/navigation";
-    import Button from "$lib/Button.svelte";
-    import Grid from "$lib/Grid.svelte";
     import Image from "$lib/Image.svelte";
     import Text from "$lib/Text.svelte";
-    import AddElementBtn from "$lib/AddElementBtn.svelte";
     import { user, baseurl } from "$lib/store.js";
     import Settings from "$lib/Settings.svelte";
     import { onMount } from "svelte";
@@ -20,14 +17,6 @@
     let postImage = !isnew ? data.image : "<img src='/favicon.png'/>";
     let postDraftContent = !isnew ? data.draftContent : "";
     let postPublishedContent = !isnew ? data.publishedContent : "";
-
-    let draft = postDraftContent
-        ? postDraftContent.split("<!-- divider -->")
-        : [];
-
-    $: if (draft) {
-        postDraftContent = draft.join("<!-- divider -->");
-    }
 
     const saveDraft = async () => {
         const post = {
@@ -151,31 +140,6 @@
             .toLowerCase();
     }
 
-    const addNewElement = (el, index) => {
-        const currentDraft = draft;
-        console.log("Element", el);
-
-        if (el === "text") {
-            currentDraft.splice(index + 1, 0, "<div class='text'></div>");
-        } else if (el === "image") {
-            currentDraft.splice(
-                index + 1,
-                0,
-                "<img class='image' src='/favicon.png'>"
-            );
-        } else if (el === "button") {
-            currentDraft.splice(
-                index + 1,
-                0,
-                "<button class='btn'>Button</button>"
-            );
-        } else if (el === "grid") {
-            currentDraft.splice(index + 1, 0, "<div class='grid-2'></div>");
-        }
-
-        draft = currentDraft;
-    };
-
     let publishedState = "btn-outline";
     $: if (!postPublished) {
         publishedState = "btn-outline";
@@ -184,6 +148,8 @@
     } else {
         publishedState = "btn-warning";
     }
+
+    $: console.log(postDraftContent);
 
     onMount(() => {
         document.body.classList.add("post");
@@ -211,7 +177,7 @@
     back
 </button>
 {#if $user}
-    <div class="controls inline-flex gap-2 fixed top-4 right-5">
+    <div class="controls inline-flex gap-2 fixed top-4 right-5 z-30">
         <button class="btn btn-outline btn-sm" on:click={saveDraft} use:hotKeyAction={{ ctrl: true, code: 'KeyS' }}
             >Save draft</button
         >
@@ -238,19 +204,7 @@
         placeholder="Headline"
         bind:value={postHeadline}
     />
-    <AddElementBtn {addNewElement} index={-1} />
-    {#each draft as str, index}
-        {#if str.substring(0, 4) === "<img"}
-            <Image bind:str />
-        {:else if str.substring(0, 4) === "<but"}
-            <Button bind:str />
-        {:else if str.substring(0, 18) === "<div class='text'>"}
-            <Text bind:str />
-        {:else if str.substring(0, 4) === "<div"}
-            <Grid bind:str />
-        {/if}
-        <AddElementBtn {addNewElement} {index} />
-    {/each}
+    <Text bind:str={postDraftContent} />
 {:else}
     {@html postImage}
     <h1>{postHeadline}</h1>

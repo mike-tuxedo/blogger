@@ -10,19 +10,53 @@ body {
 }
 
 html body {
-    background-image: url(/mountains.webp);
-    background-size: cover;
-    background-attachment: fixed;
 
     /** Defaults */
     * {
         box-sizing: border-box;
     }
 
-    img, .image {
+    img,
+    .image {
         max-width: 100%;
         width: 100%;
-        margin: 0 !important
+        margin: 0;
+        transition: all 0.4s ease-in-out;
+
+        /* Tailwind CSS */
+        &[data-width-class="w-full"] {
+            @apply w-full;
+        }
+
+        &[data-width-class="w-1/2"] {
+            @apply w-1/2;
+        }
+
+        &[data-width-class="w-1/4"] {
+            @apply w-1/4;
+        }
+
+        &[data-align-class="float-left"] {
+            @apply float-left;
+            @apply mr-5;
+        }
+
+        &[data-align-class="float-right"] {
+            @apply float-right;
+            @apply ml-5;
+        }
+
+        &[data-align-class="mr-auto"] {
+            @apply mr-auto;
+        }
+
+        &[data-align-class="mx-auto"] {
+            @apply mx-auto;
+        }
+
+        &[data-align-class="ml-auto"] {
+            @apply ml-auto;
+        }
     }
 
     /** Loggedin styling */
@@ -30,30 +64,42 @@ html body {
         .btn-logout {
             transform: rotate(180deg);
         }
+
+        button.active {
+            background: black;
+            color: white;
+        }
+
         &.posts {
             table img {
                 min-width: 100px !important;
                 height: 100px !important;
             }
         }
+
         &.post {
 
             main {
-                > div:not(.controls), > textarea, > img {
+
+                >div:not(.controls),
+                >textarea,
+                >img {
                     border: 1px solid transparent !important;
                     transition: all 0.3s;
                     position: relative;
                     width: 100%;
-    
+
                     &:hover {
                         border: 1px solid $gray !important;
                     }
                 }
-                > button {
+
+                >button {
                     margin-bottom: 20px;
                 }
             }
         }
+
         button {
             &.pure-button-primary {
                 background-color: $primary;
@@ -63,15 +109,17 @@ html body {
                 }
             }
         }
+
         textarea {
             border: 1px solid $lightGray;
             resize: none;
             margin: 0;
         }
+
         .loading {
-            background-color: $primary; 
+            background-color: $primary;
         }
-    
+
         .dropzone {
             background-color: white;
             line-height: 100px;
@@ -82,23 +130,23 @@ html body {
                 display: inline-flex;
             }
         }
-    
+
         .loading {
             position: absolute;
             z-index: 1;
         }
-    
+
         /** Texteditor */
         .tiptap {
             >*+* {
                 margin-top: 0.75em;
             }
-    
+
             ul,
             ol {
                 padding: 0 1rem;
             }
-    
+
             h1,
             h2,
             h3,
@@ -107,19 +155,19 @@ html body {
             h6 {
                 line-height: 1.1;
             }
-    
+
             code {
                 background-color: rgba(#616161, 0.1);
                 color: #616161;
             }
-    
+
             pre {
                 background: #0D0D0D;
                 color: #FFF;
                 font-family: 'JetBrainsMono', monospace;
                 padding: 0.75rem 1rem;
                 border-radius: 0.5rem;
-    
+
                 code {
                     color: inherit;
                     padding: 0;
@@ -127,23 +175,52 @@ html body {
                     font-size: 0.8rem;
                 }
             }
-    
+
             img {
                 max-width: 100%;
                 height: auto;
             }
-    
+
             blockquote {
                 padding-left: 1rem;
                 border-left: 2px solid rgba(#0D0D0D, 0.1);
             }
-    
+
             hr {
                 border: none;
                 border-top: 2px solid rgba(#0D0D0D, 0.1);
                 margin: 2rem 0;
             }
         }
+
+        /**ANCHOR Image Toolbar */
+        .tiptap-editor {
+            position: relative;
+        }
+
+        .image-toolbar {
+            position: absolute;
+            display: flex;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            z-index: 10;
+            visibility: hidden;
+        }
+
+        .image-toolbar.selectedImage {
+            visibility: visible;
+        }
+
+        .image-toolbar button {
+            margin: 2px;
+            padding: 4px;
+        }
+    }
+
+    .prose :where(img):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+        margin-top: 0;
+        @apply mb-5;
     }
 }
 
@@ -151,59 +228,77 @@ html body {
 .hide {
     display: none;
 }
+
 .fl {
     float: left;
 }
+
 .fr {
     float: right;
 }
+
 .df {
     display: flex;
 }
+
 .jcc {
     justify-content: center;
 }
+
 .jcsb {
     justify-content: space-between;
 }
+
 .aic {
     align-items: center;
 }
+
 .ase {
     align-self: flex-end;
 }
+
 .mb-1 {
     margin-bottom: 10px;
 }
+
 .mb-2 {
     margin-bottom: 20px;
 }
+
 .mb-3 {
     margin-bottom: 30px;
 }
+
 .mb-4 {
     margin-bottom: 40px;
 }
+
 .mt-1 {
     margin-top: 10px;
 }
+
 .mt-2 {
     margin-top: 20px;
 }
+
 .mt-3 {
     margin-top: 30px;
 }
+
 .mt-4 {
     margin-top: 40px;
 }
+
 .grid {
     display: grid;
 }
+
 .grid-2 {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(calc(50% - 5px), 1fr));
     gap: 10px;
 }
+
 .col {
     min-height: 40px;
     border: 1px solid $lightGray;
