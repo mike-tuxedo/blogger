@@ -88,9 +88,10 @@ html body {
                     transition: all 0.3s;
                     position: relative;
                     width: 100%;
+                    outline: none;
 
                     &:hover {
-                        border: 1px solid $gray !important;
+                        // border: 1px solid $lightGray !important;
                     }
                 }
 
@@ -138,6 +139,8 @@ html body {
 
         /** Texteditor */
         .tiptap {
+            outline: none;
+
             >*+* {
                 margin-top: 0.75em;
             }
@@ -198,23 +201,26 @@ html body {
             position: relative;
         }
 
-        .image-toolbar {
-            position: absolute;
+        .tiptap-controls {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 1);
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 14px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.05);
             z-index: 10;
-            visibility: hidden;
-        }
+            overflow: hidden;
 
-        .image-toolbar.selectedImage {
-            visibility: visible;
-        }
+            button {
+                padding: 10px;
 
-        .image-toolbar button {
-            margin: 2px;
-            padding: 4px;
+                &:hover {
+                    background: $primary;
+                }
+            }
         }
     }
 

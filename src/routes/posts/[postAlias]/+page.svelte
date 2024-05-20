@@ -177,15 +177,15 @@
     back
 </button>
 {#if $user}
-    <div class="controls inline-flex gap-2 fixed top-4 right-5 z-30">
-        <button class="btn btn-outline btn-sm" on:click={saveDraft} use:hotKeyAction={{ ctrl: true, code: 'KeyS' }}
+    <div class="controls inline-flex gap-2 fixed bottom-4 right-5 z-30">
+        <button class="btn btn-outline btn-sm bg-white" on:click={saveDraft} use:hotKeyAction={{ ctrl: true, code: 'KeyS' }}
             >Save draft</button
         >
         <button class="btn {publishedState} btn-sm" on:click={publishDraft} use:hotKeyAction={{ ctrl: true, code: 'KeyP' }}
             >Publish draft</button
         >
         {#if postPublished}
-            <button class="btn btn-outline btn-sm" on:click={unpublish} use:hotKeyAction={{ ctrl: true, code: 'KeyU' }}
+            <button class="btn btn-outline btn-sm bg-white" on:click={unpublish} use:hotKeyAction={{ ctrl: true, code: 'KeyU' }}
                 >Unpublish</button
             >
         {/if}
