@@ -12,7 +12,7 @@
     const isnew = !Object.keys(data).length;
     let postHeadline = !isnew ? data.headline : "";
     let postAlias = !isnew ? data.alias : "";
-    let postCreated = !isnew ? data.created : null;
+    let postCreated = !isnew ? data.created : Date.now();
     let postPublished = !isnew ? !!data.published : false;
     let postImage = !isnew ? data.image : "<img src='/favicon.png'/>";
     let postDraftContent = !isnew ? data.draftContent : "";
@@ -39,6 +39,9 @@
             });
             if (response.ok) {
                 console.log("post erstellt");
+                const result = await response.json();
+                console.log(result);
+                // postCreated = data.created;
             } else {
                 const errorText = await response.text();
                 console.error(
@@ -69,7 +72,6 @@
         };
 
         try {
-            console.log(JSON.stringify(post));
             const response = await fetch(`${$baseurl}/post.php`, {
                 headers: {
                     "Content-Type": "application/json",
@@ -108,7 +110,6 @@
         };
 
         try {
-            console.log(JSON.stringify(post));
             const response = await fetch(`${$baseurl}/post.php`, {
                 headers: {
                     "Content-Type": "application/json",
@@ -148,8 +149,6 @@
     } else {
         publishedState = "btn-warning";
     }
-
-    $: console.log(postDraftContent);
 
     onMount(() => {
         document.body.classList.add("post");

@@ -1,8 +1,6 @@
 <script>
     export let data;
 
-    console.log(data);
-
     // Funktion zur Konvertierung des Unix-Timestamps in ein lesbares Datum
     const convertTimestamp = (timestamp) => {
         let date = new Date(timestamp * 1000);
@@ -28,8 +26,16 @@
       <tbody>
         {#each data as post}
         <tr>
-            <td><h4>{post.headline}</h4></td>
-            <td>{post.alias}</td>
+            <td>
+              <a href="/posts/{post.alias}" data-post-created={post.created}>
+                <h4>{post.headline}</h4>
+              </a>
+            </td>
+            <td>
+              <a href="/posts/{post.alias}" data-post-created={post.created}>
+                {post.alias}
+              </a>
+            </td>
             <td>{convertTimestamp(post.created)}</td>
             <td>{post.published ? 'Ja' : 'Nein'}</td>
             <td>{@html post.image}</td>

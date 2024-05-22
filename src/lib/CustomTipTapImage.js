@@ -53,7 +53,6 @@ const CustomTiptapImage = Image.extend({
     },
     renderHTML({ HTMLAttributes }) {
         const { srcset, class: className, ...attributes } = HTMLAttributes;
-        console.log(className);
         return [
             "img",
             { ...attributes, srcset, class: `tiptap-image ${className}` },

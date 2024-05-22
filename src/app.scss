@@ -59,6 +59,11 @@ html body {
         }
     }
 
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation-duration: 4s;
+    }
+
     /** Loggedin styling */
     &.logged-in {
         .btn-logout {
@@ -202,15 +207,14 @@ html body {
         }
 
         .tiptap-controls {
-            position: fixed;
-            top: 100px;
+            position: absolute;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             background: rgba(255, 255, 255, 1);
             border: 1px solid #ccc;
             border-radius: 14px;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
             z-index: 10;
             overflow: hidden;
 
@@ -224,7 +228,7 @@ html body {
         }
     }
 
-    .prose :where(img):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+    .prose :where(img):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
         margin-top: 0;
         @apply mb-5;
     }

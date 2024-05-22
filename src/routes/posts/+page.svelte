@@ -59,7 +59,7 @@
 <h1>Posts</h1>
 {#if $user}
     <label
-        class="btn btn-circle btn-outline btn-sm swap swap-rotate fixed top-4 right-5"
+        class="btn btn-circle btn-outline btn-sm swap swap-rotate fixed bottom-4 right-5"
     >
         <input type="checkbox" bind:checked={tableview} />
         <svg

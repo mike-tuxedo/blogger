@@ -6,7 +6,8 @@
     import { slide } from "svelte/transition";
     import { user } from "$lib/store.js";
     import { onMount } from "svelte";
-
+    import { onNavigate } from '$app/navigation'
+    
     let showMenu = false;
     let showMenuBtn = true;
     let innerWidth = 0;
@@ -35,6 +36,17 @@
     onMount(() => {
         body = document.body;
     })
+
+    onNavigate((navigation) => {
+		if (!document.startViewTransition) return
+
+		return new Promise((resolve) => {
+			document.startViewTransition(async () => {
+				resolve()
+				await navigation.complete
+			})
+		})
+	})
 </script>
 
 <svelte:window bind:innerWidth />
