@@ -1,6 +1,7 @@
 
 <script>
   export let post = null;
+  export let alias;
   let metadescription = '';
   let metatitle = '';
 </script>
@@ -20,10 +21,16 @@
       <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
     </form>
     <h3 class="font-bold text-lg">Pagesettings</h3>
+    <label class="form-control w-full mb-4">
+      <div class="label">
+        <span class="label-text">{location.host}/{alias}</span>
+      </div>
+      <input type="text" class="input input-bordered w-full" placeholder="Alias" bind:value={alias}/>
+    </label>
     <label class="input input-bordered flex items-center gap-2 mb-4">
       <input type="text" class="text-md" placeholder="Metatitle" bind:value={metatitle}/>
     </label>
-    <textarea class="textarea textarea-bordered text-md w-full" placeholder="Metadescription" bind:value={metadescription}></textarea>
+    <textarea class="textarea textarea-bordered w-full" placeholder="Metadescription" bind:value={metadescription}></textarea>
   </div>
 </dialog>
 {/if}

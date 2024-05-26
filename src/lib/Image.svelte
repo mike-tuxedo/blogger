@@ -12,6 +12,8 @@
         rejected: [],
     };
 
+    console.log($baseurl)
+
     const handleFilesSelect = async (e) => {
         loading = true;
         const { acceptedFiles, fileRejections } = e.detail;
@@ -35,7 +37,7 @@
                     const data = await response.json(); // Parse JSON response
                     console.log(data);
                     // hier müsste gleich figure mit srcset gemacht werden
-                    str = `<img class="${htmlClass}" src="${$baseurl}/uploads/300_${data.filename}" srcset="${$baseurl}/uploads/300_${data.filename} 300w, ${$baseurl}/uploads/600_${data.filename} 600w, ${$baseurl}/uploads/1200_${data.filename} 1200w" alt="${data.filename}" />`;
+                    str = `<img class="${htmlClass}" src="uploads/300_${data.filename}" srcset="uploads/300_${data.filename} 300w, uploads/600_${data.filename} 600w, uploads/1200_${data.filename} 1200w" alt="${data.filename}" />`;
                     console.log(`${file.name} uploaded successfully`);
                 } else {
                     console.error(`${file.name} upload failed`);

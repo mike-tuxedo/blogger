@@ -5,7 +5,7 @@
 
     const login = () => {
         $user = "Mike";
-        goto("/posts");
+        goto("/");
     };
 
     onMount(() => {
@@ -20,7 +20,7 @@
     <span
         class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
     >
-        <img class="w-8 h-8 mr-2" src="/favicon.png" alt="logo" />
+        <img class="w-8 h-8 mr-2" src="/logo.svg" alt="logo" />
         Blogger
 </span>
     <div

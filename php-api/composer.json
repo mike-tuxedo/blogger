@@ -1,0 +1,7 @@
+{
+    "name": "blogger/bloggerapi",
+    "description": "A api for blogger.",
+    "require": {
+        "rosell-dk/webp-convert": "^2.8"
+    }
+}

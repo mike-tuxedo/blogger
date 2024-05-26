@@ -6,7 +6,7 @@
     import { slide } from "svelte/transition";
     import { user } from "$lib/store.js";
     import { onMount } from "svelte";
-    import { onNavigate } from '$app/navigation'
+    import { onNavigate } from '$app/navigation';
     
     let showMenu = false;
     let showMenuBtn = true;
@@ -69,8 +69,7 @@
         {#if showMenu}
             <div transition:slide={{ duration: 200 }}>
                 <a href="/">home</a>
-                <a href="/posts">posts</a>
-                <a href="/posts/test" data-sveltekit-preload-data="off">post 404 test</a>
+                <a href="/test404" data-sveltekit-preload-data="off">404 test</a>
                 <a href="/login">login</a>
             </div>
         {/if}

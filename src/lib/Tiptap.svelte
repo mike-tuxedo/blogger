@@ -1,15 +1,18 @@
 <script>
     import { onMount, onDestroy } from "svelte";
+    import { fade, fly, scale, slide } from "svelte/transition";
     import { Editor } from "@tiptap/core";
     import StarterKit from "@tiptap/starter-kit";
     import TextAlign from "@tiptap/extension-text-align";
     import Blockquote from "@tiptap/extension-blockquote";
     import CodeBlock from "@tiptap/extension-code-block";
     import HorizontalRule from "@tiptap/extension-horizontal-rule";
+    import Youtube from "@tiptap/extension-youtube";
     import Dropcursor from "@tiptap/extension-dropcursor";
-    import { baseurl } from "$lib/store.js";
+    import Placeholder from "@tiptap/extension-placeholder";
+    import CustomTiptapYoutube from "$lib/CustomTiptapYoutube.js";
     import CustomTiptapImage from "$lib/CustomTipTapImage.js";
-    import { fade, fly, scale, slide } from "svelte/transition";
+    import { baseurl } from "$lib/store.js";
     import Icon from "./Icon.svelte";
     import { clickOutsideAction } from "svelte-legos";
 
@@ -17,7 +20,7 @@
     let editorElement;
     let editorOuterElement;
     let editor;
-    let selectedImage = null;
+    let selectedMedia = null;
     let selectedParagraph = null;
     let currentNode = null;
     let changedCount = 1;
@@ -49,14 +52,20 @@
                 CodeBlock,
                 HorizontalRule,
                 Dropcursor,
+                Youtube,
+                CustomTiptapYoutube,
                 CustomTiptapImage.configure({
                     inline: false,
                     allowBase64: false,
                 }),
+                Placeholder.configure({
+                    placeholder:
+                        "Now free your mind - start typing, drag n drop an image or paste a youtube link!",
+                }),
             ],
             content: content,
             onUpdate: ({ editor }) => {
-                updateSelectedImage(editor);
+                updateSelectedMedia(editor);
                 content = editor.getHTML();
             },
         });
@@ -79,21 +88,41 @@
 
     function setSelectedNode(event) {
         const { target } = event;
-        selectedImage = null;
+        selectedMedia = null;
         selectedParagraph = null;
 
         setTimeout(() => {
             containerY = editorOuterElement.getBoundingClientRect().top;
             mouseY = event.clientY;
 
-            if (target.tagName === "IMG") {
-                selectedImage = target;
+            if (
+                target.tagName === "IMG" ||
+                target.hasAttribute("data-youtube-video")
+            ) {
+                selectedMedia = target;
                 currentNode = target;
                 selectedParagraph = null;
-            } else if (["P", "H1", "H2", "H3", "H4", "STRONG", "CODE", "PRE", "DIV", "UL", "OL", "LI", "EM"].includes(target.tagName)) {
+                console.log(selectedMedia);
+            } else if (
+                [
+                    "P",
+                    "H1",
+                    "H2",
+                    "H3",
+                    "H4",
+                    "STRONG",
+                    "CODE",
+                    "PRE",
+                    "DIV",
+                    "UL",
+                    "OL",
+                    "LI",
+                    "EM",
+                ].includes(target.tagName)
+            ) {
                 selectedParagraph = target;
                 currentNode = target;
-                selectedImage = null;
+                selectedMedia = null;
             }
         }, 50);
     }
@@ -101,17 +130,17 @@
     function handleClick(event) {
         setSelectedNode(event);
     }
-    
-    function handleMouseDown(event) {
-    }
 
-    function updateSelectedImage(editor) {
+    function handleMouseDown(event) {}
+
+    function updateSelectedMedia(editor) {
         const { doc, selection } = editor.state;
         const node = doc.nodeAt(selection.from);
-        if (node?.type.name === "image") {
-            selectedImage = editor.view.domAtPos(selection.from).node;
+        console.log(node);
+        if (node?.type.name === "image" || node?.type.name === "div") {
+            selectedMedia = editor.view.domAtPos(selection.from).node;
         } else {
-            selectedImage = null;
+            selectedMedia = null;
         }
     }
 
@@ -126,8 +155,9 @@
         } else {
             const text = event.clipboardData.getData("text");
             if (isYouTubeLink(text)) {
-                const youtubeEmbed = generateYouTubeEmbed(text);
-                editor.commands.insertContent(youtubeEmbed);
+                editor.commands.setYoutubeVideo({
+                    src: text,
+                });
             }
         }
     }
@@ -179,7 +209,7 @@
 
             if (response.ok) {
                 const data = await response.json(); // Parse JSON response
-                let html = `<img class="tiptap-image" src="${$baseurl}/uploads/300_${data.filename}" srcset="${$baseurl}/uploads/300_${data.filename} 300w, ${$baseurl}/uploads/600_${data.filename} 600w, ${$baseurl}/uploads/1200_${data.filename} 1200w" alt="${data.filename}" />`;
+                let html = `<img class="tiptap-image" src="uploads/300_${data.filename}" srcset="uploads/300_${data.filename} 300w, uploads/600_${data.filename} 600w, uploads/1200_${data.filename} 1200w" alt="${data.filename}" />`;
 
                 if (pos !== null) {
                     editor.chain().insertContentAt(pos, html).focus().run();
@@ -209,17 +239,8 @@
 
     function isYouTubeLink(text) {
         const youtubeRegex =
-            /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+            /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
         return youtubeRegex.test(text);
-    }
-
-    function generateYouTubeEmbed(url) {
-        let videoId = url.split("v=")[1] || url.split("youtu.be/")[1];
-        const ampersandPosition = videoId.indexOf("&");
-        if (ampersandPosition !== -1) {
-            videoId = videoId.substring(0, ampersandPosition);
-        }
-        return `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
     }
 
     function isImageUrl(url) {
@@ -227,8 +248,13 @@
     }
 
     function applyImageWidth(htmlClass) {
-        if (selectedImage) {
+        console.log(selectedMedia);
+
+        if (selectedMedia) {
             editor.commands.updateAttributes("image", {
+                widthClass: htmlClass,
+            });
+            editor.commands.updateAttributes("youtube", {
                 widthClass: htmlClass,
             });
             changedCount++;
@@ -236,17 +262,23 @@
     }
 
     function applyImageFloats(htmlClass) {
-        if (selectedImage) {
+        if (selectedMedia) {
             editor.commands.updateAttributes("image", {
                 alignClass: htmlClass,
+            });
+            editor.commands.updateAttributes("youtube", {
+                widthClass: htmlClass,
             });
             changedCount++;
         }
     }
 
     function applyImageAlignment(htmlClass) {
-        if (selectedImage) {
+        if (selectedMedia) {
             editor.commands.updateAttributes("image", {
+                alignClass: htmlClass,
+            });
+            editor.commands.updateAttributes("youtube", {
                 alignClass: htmlClass,
             });
             changedCount++;
@@ -254,14 +286,14 @@
     }
 
     function deleteImage() {
-        if (selectedImage) {
+        if (selectedMedia) {
             editor.commands.deleteSelection();
-            selectedImage = null;
+            selectedMedia = null;
         }
     }
 
     function handleClickOutside() {
-        selectedImage = null;
+        selectedMedia = null;
         selectedParagraph = null;
     }
 
@@ -279,7 +311,11 @@
     }
 </script>
 
-<div use:clickOutsideAction={handleClickOutside} bind:this={editorOuterElement}>
+<div
+    class="relative"
+    use:clickOutsideAction={handleClickOutside}
+    bind:this={editorOuterElement}
+>
     {#if selectedParagraph}
         <div
             transition:scale={{ duration: 150, start: 0.9 }}
@@ -363,7 +399,9 @@
             >
                 <Icon name="ordered-list" />
             </button>
-            <div style="border-right: 1px solid #888; margin-top: 8px; height: 28px"/>
+            <div
+                style="border-right: 1px solid #888; margin-top: 8px; height: 28px"
+            />
             <button
                 on:click={() => {
                     editor.chain().focus().setTextAlign("left").run();
@@ -394,7 +432,9 @@
             >
                 <Icon name="align-right" />
             </button>
-            <div style="border-right: 1px solid #888; margin-top: 8px; height: 28px"/>
+            <div
+                style="border-right: 1px solid #888; margin-top: 8px; height: 28px"
+            />
             <button
                 on:click={() => {
                     editor.chain().focus().toggleBlockquote().run();
@@ -425,7 +465,7 @@
                 <Icon name="horizontal-rule" />
             </button>
         </div>
-    {:else if selectedImage}
+    {:else if selectedMedia}
         <div
             transition:scale={{ duration: 150, start: 0.9 }}
             class="tiptap-controls absolute top-0 flex"
@@ -450,7 +490,9 @@
                     editor.isActive({ widthClass: "w-1/4" })}
                 ><Icon name="resize-small" /></button
             >
-            <div style="border-right: 1px solid #888; margin-top: 8px; height: 28px"/>
+            <div
+                style="border-right: 1px solid #888; margin-top: 8px; height: 28px"
+            />
             <button
                 on:click={() => applyImageFloats("float-left")}
                 class:active={changedCount &&
@@ -482,7 +524,9 @@
                         alignClass: "float-right",
                     })}><Icon name="float-right" /></button
             >
-            <div style="border-right: 1px solid #888; margin-top: 8px; height: 28px"/>
+            <div
+                style="border-right: 1px solid #888; margin-top: 8px; height: 28px"
+            />
             <button on:click={deleteImage}><Icon name="trash" /></button>
         </div>
     {/if}
