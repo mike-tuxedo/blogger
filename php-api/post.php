@@ -13,7 +13,7 @@ if (!$db) {
 }
 
 // Create tables if not exists
-$db->exec('CREATE TABLE IF NOT EXISTS posts(headline TEXT, alias TEXT, created INTEGER, published INTEGER, image TEXT, draftContent BLOB, publishedContent BLOB, metatitle TEXT, metadescription TEXT, PRIMARY KEY (created))');
+$db->exec('CREATE TABLE IF NOT EXISTS posts(headline TEXT, alias TEXT, created INTEGER, published INTEGER, showHeroImage INTEGER, image TEXT, draftContent BLOB, publishedContent BLOB, metatitle TEXT, metadescription TEXT, PRIMARY KEY (created))');
 $db->exec('CREATE TABLE IF NOT EXISTS users(name TEXT PRIMARY KEY, password TEXT)');
 
 // Handle POST requests for /api/post
@@ -28,11 +28,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $stmt->execute();
     $count = 0;
 
-    $stmt = $db->prepare('REPLACE INTO posts(headline, alias, created, published, image, draftContent, publishedContent) VALUES (:headline, :alias, :created, :published, :image, :draftContent, :publishedContent)');
+    $stmt = $db->prepare('REPLACE INTO posts(headline, alias, created, published, showHeroImage, image, draftContent, publishedContent) VALUES (:headline, :alias, :created, :published, :showHeroImage, :image, :draftContent, :publishedContent)');
     $stmt->bindValue(':headline', $postData['headline'], SQLITE3_TEXT);
     $stmt->bindValue(':alias', $alias, SQLITE3_TEXT);
     $stmt->bindValue(':created', $created, SQLITE3_INTEGER);
     $stmt->bindValue(':published', $postData['published'], SQLITE3_INTEGER);
+    $stmt->bindValue(':showHeroImage', $postData['showHeroImage'], SQLITE3_INTEGER);
     $stmt->bindValue(':image', $postData['image'], SQLITE3_TEXT);
     $stmt->bindValue(':draftContent', $postData['draftContent'], SQLITE3_BLOB);
     $stmt->bindValue(':publishedContent', $postData['publishedContent'], SQLITE3_BLOB);

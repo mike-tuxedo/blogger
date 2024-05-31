@@ -18,6 +18,7 @@
     let postImage = !isnew ? data.image : "<img src='/favicon.png'/>";
     let postDraftContent = !isnew ? data.draftContent : "";
     let postPublishedContent = !isnew ? data.publishedContent : "";
+    let showHeroImage = !isnew ? !!data.showHeroImage : true;
 
     const saveDraft = async () => {
         if (!postAlias) {
@@ -32,6 +33,7 @@
             image: postImage,
             draftContent: postDraftContent,
             publishedContent: data.publishedContent,
+            showHeroImage: showHeroImage
         };
 
         try {
@@ -71,6 +73,7 @@
             image: postImage,
             draftContent: postDraftContent,
             publishedContent: postDraftContent,
+            showHeroImage: showHeroImage
         };
 
         try {
@@ -109,6 +112,7 @@
             image: postImage,
             draftContent: postDraftContent,
             publishedContent: postPublishedContent,
+            showHeroImage: showHeroImage
         };
 
         try {
@@ -167,7 +171,7 @@
 </script>
 
 <button
-    class="btn btn-outline btn-secondary fixed left-4 bottom-4"
+    class="btn btn-outline btn-secondary fixed left-4 top-8"
     on:click={() => goto("/")}
     use:hotKeyAction={{ ctrl: true, code: "Backspace" }}
 >
@@ -212,12 +216,12 @@
         {/if}
         <Settings post={data} bind:alias={postAlias}/>
     </div>
-
-    <label for="alias">
-        Alias
-        <input type="text" id="alias" bind:value={postAlias} />
-    </label>
-    <Image bind:str={postImage} htmlClass="heroimage" />
+    <div class="relative min-h-10">
+        <button on:click={() => showHeroImage = !showHeroImage} class="absolute z-10 btn btn-primary top-4 right-4">Toggle heroimage</button>
+        {#if showHeroImage}
+            <Image bind:str={postImage} htmlClass="heroimage" />
+        {/if}
+    </div>
     <textarea
         class="h1"
         type="text"
@@ -229,9 +233,9 @@
     />
     <Text bind:str={postDraftContent} />
 {:else}
-    <div class="hero">
-        {@html postImage}
-        <h1>{postHeadline}</h1>
+    <div class:hero={showHeroImage}>
+        {#if showHeroImage}{@html postImage}{/if}
+        <h1 class="headline">{postHeadline}</h1>
     </div>
     {@html postPublishedContent}
 {/if}

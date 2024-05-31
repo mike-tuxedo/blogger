@@ -172,15 +172,18 @@ body.defaultTheme {
                 object-position: center;
                 margin-bottom: 0;
             }
-            h1 {
-                pointer-events: none;
-                position: relative;
-                z-index: 1;
-                margin: 0;
-                padding: 0 clamp(20px, 9vw, 100px);
-                font-size: clamp(25px, 5vw, 50px);
+            h1.headline {
                 color: var(--tw-prose-invert-bold);
             }
+        }
+        h1.headline {
+            pointer-events: none;
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            padding: 0 clamp(20px, 9vw, 100px);
+            font-size: clamp(25px, 5vw, 50px);
+            text-align: center;
         }
     }
 }

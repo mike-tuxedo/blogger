@@ -10,6 +10,7 @@
     import Youtube from "@tiptap/extension-youtube";
     import Dropcursor from "@tiptap/extension-dropcursor";
     import Placeholder from "@tiptap/extension-placeholder";
+    import Image from "@tiptap/extension-image";
     import CustomTiptapYoutube from "$lib/CustomTiptapYoutube.js";
     import CustomTiptapImage from "$lib/CustomTipTapImage.js";
     import { baseurl } from "$lib/store.js";
@@ -58,6 +59,7 @@
                     inline: false,
                     allowBase64: false,
                 }),
+                Image,
                 Placeholder.configure({
                     placeholder:
                         "Now free your mind - start typing, drag n drop an image or paste a youtube link!",
@@ -192,11 +194,17 @@
         }
     }
 
+    async function handleUpload(event) {
+        uploadFile(event.target.files[0]);
+    }
+
     async function uploadFile(file, pos = null) {
         if (!allowedMimeTypes.includes(file.type)) {
             console.error("Unsupported file type:", file.type);
             return;
         }
+
+        console.log(file.type)
 
         const formData = new FormData();
         formData.append("file", file);
@@ -267,7 +275,7 @@
                 alignClass: htmlClass,
             });
             editor.commands.updateAttributes("youtube", {
-                widthClass: htmlClass,
+                alignClass: htmlClass,
             });
             changedCount++;
         }
@@ -463,6 +471,15 @@
                 class:active={changedCount && editor.isActive("horizontalRule")}
             >
                 <Icon name="horizontal-rule" />
+            </button>
+            <button class="relative">
+                <Icon name="image"/>
+                <input
+                class="absolute w-full h-full top-0 left-0 opacity-0"
+                    type="file"
+                    accept="image/*"
+                    on:change={(event) => handleUpload(event)}
+                />
             </button>
         </div>
     {:else if selectedMedia}

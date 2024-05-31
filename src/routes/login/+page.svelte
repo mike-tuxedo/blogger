@@ -21,7 +21,7 @@
         class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
     >
         <img class="w-8 h-8 mr-2" src="/logo.svg" alt="logo" />
-        Blogger
+        BlogYourMind
 </span>
     <div
         class="w-full rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 bg-white/60 backdrop-blur-sm"

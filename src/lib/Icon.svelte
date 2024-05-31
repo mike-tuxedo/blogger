@@ -2,7 +2,7 @@
     export let name;
 
     const icons = {
-        'full-width': `
+        "full-width": `
             <svg
                 class="icon icon-tabler icon-tabler-resize"
                 width="24"
@@ -36,7 +36,7 @@
                 <rect x="7.191" y="8.395" width="9.617" height="7.211" ry="1.3" stroke="currentColor" style="paint-order:stroke fill markers" />
             </svg>
         `,
-        'resize-small': `
+        "resize-small": `
             <svg
                 class="icon icon-tabler icon-tabler-resize"
                 width="24"
@@ -53,7 +53,7 @@
                 <rect x="9.175" y="9.166" width="5.649" height="5.668" ry="1.3" stroke="currentColor" style="paint-order:stroke fill markers" />
             </svg>
         `,
-        'float-left': `
+        "float-left": `
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="icon icon-tabler icon-tabler-float-left"
@@ -74,7 +74,7 @@
                 <path d="M4 19l16 0" />
             </svg>
         `,
-        'align-left': `
+        "align-left": `
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="icon icon-tabler icon-tabler-align-left"
@@ -93,7 +93,7 @@
                 <path d="M4 18l14 0" />
             </svg>
         `,
-        'align-center': `
+        "align-center": `
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="icon icon-tabler icon-tabler-align-center"
@@ -112,7 +112,7 @@
                 <path d="M6 18l12 0" />
             </svg>
         `,
-        'align-right': `
+        "align-right": `
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="icon icon-tabler icon-tabler-align-right"
@@ -131,7 +131,7 @@
                 <path d="M6 18l14 0" />
             </svg>
         `,
-        'float-right': `
+        "float-right": `
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="icon icon-tabler icon-tabler-float-right"
@@ -173,7 +173,7 @@
                 <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
             </svg>
         `,
-        'heading-1': `
+        "heading-1": `
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="icon icon-tabler icon-tabler-h-1"
@@ -197,7 +197,7 @@
                 <path d="M11 6h2" />
             </svg>
         `,
-        'heading-2': `
+        "heading-2": `
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="icon icon-tabler icon-tabler-h-2"
@@ -221,7 +221,7 @@
                 <path d="M11 6h2" />
             </svg>
         `,
-        'heading-3': `
+        "heading-3": `
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="icon icon-tabler icon-tabler-h-3"
@@ -246,7 +246,7 @@
                 <path d="M11 6h2" />
             </svg>
         `,
-        'heading-4': `
+        "heading-4": `
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="icon icon-tabler icon-tabler-h-4"
@@ -292,7 +292,7 @@
                 <path d="M3 9h1a1 1 0 1 1 -1 1v-2.5a2 2 0 0 1 2 -2" />
             </svg>
         `,
-        'bullet-list': `
+        "bullet-list": `
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="icon icon-tabler icon-tabler-list"
@@ -314,7 +314,7 @@
                 <path d="M5 18l0 .01" />
             </svg>
         `,
-        'ordered-list': `
+        "ordered-list": `
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="icon icon-tabler icon-tabler-list-numbers"
@@ -335,7 +335,7 @@
                 <path d="M6 10v-6l-2 2" />
             </svg>
         `,
-        'code-block': `
+        "code-block": `
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="icon icon-tabler icon-tabler-source-code"
@@ -354,7 +354,7 @@
                 <path d="M10 9l2 -2l-2 -2" />
             </svg>
         `,
-        'horizontal-rule': `
+        "horizontal-rule": `
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="icon icon-tabler icon-tabler-separator-horizontal"
@@ -410,7 +410,16 @@
                 <path d="M14 5l-4 14" />
             </svg>
         `,
+        image: `
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-photo" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M15 8h.01" />
+  <path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z" />
+  <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5" />
+  <path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3" />
+</svg>
+`,
     };
 </script>
 
-{@html icons[name] || ''}
+{@html icons[name] || ""}

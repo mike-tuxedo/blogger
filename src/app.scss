@@ -68,8 +68,6 @@ html body {
     }
 
     div[data-youtube-video] {
-        @apply skeleton;
-
         iframe {
             width: 100%;
             height: auto;
@@ -144,11 +142,13 @@ html body {
                 height: 360px;
                 object-fit: cover;
                 object-position: center;
+                margin-bottom: 0;
             }
         }
 
         div[data-youtube-video] {
             cursor: pointer;
+            @apply skeleton;
         }
 
         textarea.h1 {
@@ -208,6 +208,17 @@ html body {
         }
 
         /** ANCHOR Tiptap toolbar */
+        .tippy-box[data-state='hidden'] {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.2s;
+        }
+        .tippy-box[data-state='visible'] {
+            opacity: 1;
+            transform: scale(1);
+        }
+         
+
         .tiptap-controls {
             position: absolute;
             left: 50%;
