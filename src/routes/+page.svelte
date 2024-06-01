@@ -77,7 +77,7 @@
     </li>
 </ul>
 
-<h1>Welcome to my blog.</h1>
+<h1>Welcome to your blog.</h1>
 <p>You may find any topic here, just search around through the lupe or browse my categories.</p>
 <h3>ENJOY when it's ready! :)</h3>
 
@@ -135,7 +135,11 @@
                         href="/{post.alias}"
                         data-post-created={post.created}
                     >
-                        {@html post.image}
+                        {#if post.showHeroImage}
+                            {@html post.image}
+                        {:else}
+                        <img src="favicon.png" alt="placeholder">
+                        {/if}
                         <div class="post-info">
                             <h4>{post.headline}</h4>
                             <span>{toReadableDate(post.created)}</span>

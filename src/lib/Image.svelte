@@ -5,17 +5,15 @@
 
     export let str = "";
     export let htmlClass = "";
-    let loading = false;
+    let uploading = false;
 
     let files = {
         accepted: [],
         rejected: [],
     };
 
-    console.log($baseurl)
-
     const handleFilesSelect = async (e) => {
-        loading = true;
+        uploading = true;
         const { acceptedFiles, fileRejections } = e.detail;
         files.accepted = [...files.accepted, ...acceptedFiles];
         files.rejected = [...files.rejected, ...fileRejections];
@@ -42,10 +40,10 @@
                 } else {
                     console.error(`${file.name} upload failed`);
                 }
-                loading = false;
+                uploading = false;
             } catch (error) {
-                console.error("Error uploading file:", error);
-                loading = false;
+                console.error("Error upuploading file:", error);
+                uploading = false;
             }
         }
     };
@@ -63,14 +61,16 @@
 {#if $user}
     <Dropzone on:drop={handleFilesSelect} bind:files let:files>
         {#if preview}
-            <img class="dropzone-preview {htmlClass}" src={preview} transition:fade />
+            <div class="image absolute {htmlClass}" class:uploading transition:fade>
+                <img class="dropzone-preview" src={preview} transition:fade />
+            </div>
         {:else if str.length}
-            <div class="image" transition:fade>{@html str}</div>
+            <div class="image absolute" class:uploading transition:fade>{@html str}</div>
         {:else}
             <p class="dropezone-text" transition:fade>drop file here</p>
         {/if}
-        {#if loading}
-            <div class="loading" transition:fade>lade</div>
+        {#if uploading}
+            <div class="loading loading-spinner loading-lg h-full" transition:fade>lade</div>
         {/if}
     </Dropzone>
 {:else}

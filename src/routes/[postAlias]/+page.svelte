@@ -6,7 +6,7 @@
     import Settings from "$lib/Settings.svelte";
     import { onMount } from "svelte";
     import { hotKeyAction } from "svelte-legos";
-    import { transformTextToURL } from "$lib/utils.js";
+    import { customSlide, transformTextToURL } from "$lib/utils.js";
 
     /** @type {import('./$types').PageData} */
     export let data;
@@ -18,7 +18,10 @@
     let postImage = !isnew ? data.image : "<img src='/favicon.png'/>";
     let postDraftContent = !isnew ? data.draftContent : "";
     let postPublishedContent = !isnew ? data.publishedContent : "";
-    let showHeroImage = !isnew ? !!data.showHeroImage : true;
+    let postShowHeroImage = !isnew ? !!data.showHeroImage : true;
+
+    let initialHeadline = postHeadline;
+    let initialShowHeroImage = postShowHeroImage;
 
     const saveDraft = async () => {
         if (!postAlias) {
@@ -33,7 +36,7 @@
             image: postImage,
             draftContent: postDraftContent,
             publishedContent: data.publishedContent,
-            showHeroImage: showHeroImage
+            showHeroImage: postShowHeroImage
         };
 
         try {
@@ -64,6 +67,8 @@
     const publishDraft = async () => {
         postPublished = true;
         postPublishedContent = postDraftContent;
+        initialShowHeroImage = postShowHeroImage;
+        initialHeadline = postHeadline;
 
         const post = {
             headline: postHeadline,
@@ -73,7 +78,7 @@
             image: postImage,
             draftContent: postDraftContent,
             publishedContent: postDraftContent,
-            showHeroImage: showHeroImage
+            showHeroImage: postShowHeroImage
         };
 
         try {
@@ -112,7 +117,7 @@
             image: postImage,
             draftContent: postDraftContent,
             publishedContent: postPublishedContent,
-            showHeroImage: showHeroImage
+            showHeroImage: postShowHeroImage
         };
 
         try {
@@ -143,7 +148,8 @@
     let publishedState = "btn-outline";
     $: if (!postPublished) {
         publishedState = "btn-outline";
-    } else if (postDraftContent === postPublishedContent && postPublished) {
+    } else if (postDraftContent === postPublishedContent && postPublished && 
+    (postShowHeroImage === initialShowHeroImage) && (postHeadline === initialHeadline)) {
         publishedState = "btn-success";
     } else {
         publishedState = "btn-warning";
@@ -217,9 +223,11 @@
         <Settings post={data} bind:alias={postAlias}/>
     </div>
     <div class="relative min-h-10">
-        <button on:click={() => showHeroImage = !showHeroImage} class="absolute z-10 btn btn-primary top-4 right-4">Toggle heroimage</button>
-        {#if showHeroImage}
-            <Image bind:str={postImage} htmlClass="heroimage" />
+        <button on:click={() => postShowHeroImage = !postShowHeroImage} class="absolute z-10 btn btn-primary top-4 right-4">Toggle heroimage</button>
+        {#if postShowHeroImage}
+        <div transition:customSlide>
+            <Image bind:str={postImage} htmlClass="heroimage"/>
+        </div>
         {/if}
     </div>
     <textarea
@@ -233,8 +241,8 @@
     />
     <Text bind:str={postDraftContent} />
 {:else}
-    <div class:hero={showHeroImage}>
-        {#if showHeroImage}{@html postImage}{/if}
+    <div class:hero={postShowHeroImage}>
+        {#if postShowHeroImage}{@html postImage}{/if}
         <h1 class="headline">{postHeadline}</h1>
     </div>
     {@html postPublishedContent}

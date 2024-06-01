@@ -33,7 +33,7 @@ If you want to use the php api, then you need the following packages installed o
 
 
 Install php dependencies. Go into the php-api folder and execute the following
-`composer install`
+`cd php-api && composer install`
 
 Then you can run sveltekit and the php api with
 `npm run dev-php`

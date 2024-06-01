@@ -217,7 +217,7 @@
 
             if (response.ok) {
                 const data = await response.json(); // Parse JSON response
-                let html = `<img class="tiptap-image" src="uploads/300_${data.filename}" srcset="uploads/300_${data.filename} 300w, uploads/600_${data.filename} 600w, uploads/1200_${data.filename} 1200w" alt="${data.filename}" />`;
+                let html = `<img class="tiptap-image" loading="lazy" src="uploads/300_${data.filename}" srcset="uploads/300_${data.filename} 300w, uploads/600_${data.filename} 600w, uploads/1200_${data.filename} 1200w" alt="${data.filename}" />`;
 
                 if (pos !== null) {
                     editor.chain().insertContentAt(pos, html).focus().run();
@@ -256,8 +256,6 @@
     }
 
     function applyImageWidth(htmlClass) {
-        console.log(selectedMedia);
-
         if (selectedMedia) {
             editor.commands.updateAttributes("image", {
                 widthClass: htmlClass,
