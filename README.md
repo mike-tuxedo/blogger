@@ -3,6 +3,9 @@ BlogYourMind is a minimalist open source blogging CMS that is easy to install an
 
 Experience easy blogging with BlogYourMind!
 
+THIS IS ABSOLUTLY NOT READY YET! DON'T WASTE YOUR TIME TRYING IT OUT.
+Just save it as a booking and come back later ;-)
+
 ## Development
 
 ### Sveltekit + Nodejs backend
