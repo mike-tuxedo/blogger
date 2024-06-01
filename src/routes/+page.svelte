@@ -57,25 +57,25 @@
     });
 </script>
 
-<h4>Todos</h4>
-<ul>
-    <li>Overwrite Images with the same name on the server, instead of uploading it multiple times</li>
-    <li>posibility to write post without image, remove heroimage</li>
-    <li>Style 404 page</li>
-    <li>Determine how I can implement php and nodejs api in this project and run it localy</li>
-    <li>Implement a search function</li>
+<h4 class="mt-6">Todos</h4>
+<ol>
+    <li>Change to svelte5, use runes and so on</li>
     <li>Implement a category system</li>
+    <li>Add real login, check if account exist and add admin if not.</li>
+    <li>Overwrite Images with the same name on the server, instead of uploading it multiple times</li>
+    <li>Implement a search function</li>
     <li>Check if no posts are available, check if an user exists, if not show modal to switch to login page and create user.</li>
     <li>
         Enhance Settings
-        <ul>
+        <ol>
             <li>Save additional metatags</li>
-            <li>Switch Themes</li>
-            <li>Add custom css</li>
-            <li>Switch between php and nodejs api</li>
-        </ul>
+            <li>Add switch themes function</li>
+            <li>Add posibility for custom css</li>
+            <li>Check how to switch between php and nodejs api</li>
+        </ol>
     </li>
-</ul>
+</ol>
+<hr>
 
 <h1>Welcome to your blog.</h1>
 <p>You may find any topic here, just search around through the lupe or browse my categories.</p>
