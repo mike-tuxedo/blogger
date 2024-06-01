@@ -1,12 +1,12 @@
 <?php
-require 'vendor/autoload.php';
-
-use WebPConvert\WebPConvert;
-
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Credentials: true");
+
+require 'vendor/autoload.php';
+
+use WebPConvert\WebPConvert;
 
 function resizeImageWithImagick($filePath, $width, $outputFilePath)
 {

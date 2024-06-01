@@ -1,6 +1,6 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Credentials: true");
@@ -13,7 +13,7 @@ if (!$db) {
 }
 
 // Create tables if not exists
-$db->exec('CREATE TABLE IF NOT EXISTS posts(headline TEXT, alias TEXT, created INTEGER, published INTEGER, showHeroImage INTEGER, image TEXT, draftContent BLOB, publishedContent BLOB, metatitle TEXT, metadescription TEXT, PRIMARY KEY (created))');
+$db->exec('CREATE TABLE IF NOT EXISTS posts(headline TEXT, alias TEXT, created INTEGER, published INTEGER, showHeroImage INTEGER, showHeroImage INTEGER, image TEXT, draftContent BLOB, publishedContent BLOB, metatitle TEXT, metadescription TEXT, PRIMARY KEY (created))');
 $db->exec('CREATE TABLE IF NOT EXISTS users(name TEXT PRIMARY KEY, password TEXT)');
 
 // Handle POST requests for /api/post
@@ -29,6 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $count = 0;
 
     $stmt = $db->prepare('REPLACE INTO posts(headline, alias, created, published, showHeroImage, image, draftContent, publishedContent) VALUES (:headline, :alias, :created, :published, :showHeroImage, :image, :draftContent, :publishedContent)');
+
+    if (!$stmt) {
+        echo "Post could not be created";
+        die("Failed to prepare statement: " . $db->lastErrorMsg());
+    }
+    
     $stmt->bindValue(':headline', $postData['headline'], SQLITE3_TEXT);
     $stmt->bindValue(':alias', $alias, SQLITE3_TEXT);
     $stmt->bindValue(':created', $created, SQLITE3_INTEGER);

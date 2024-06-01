@@ -1,6 +1,6 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Credentials: true");
@@ -13,7 +13,7 @@ if (!$db) {
 }
 
 // Create tables if not exists
-$db->exec('CREATE TABLE IF NOT EXISTS posts(headline TEXT, alias TEXT, created INTEGER, published INTEGER, image TEXT, draftContent BLOB, publishedContent BLOB, PRIMARY KEY (created))');
+$db->exec('CREATE TABLE IF NOT EXISTS posts(headline TEXT, alias TEXT, created INTEGER, published INTEGER, showHeroImage INTEGER, image TEXT, draftContent BLOB, publishedContent BLOB, PRIMARY KEY (created))');
 $db->exec('CREATE TABLE IF NOT EXISTS users(name TEXT PRIMARY KEY, password TEXT)');
 
 // Handle GET requests for /api/posts
