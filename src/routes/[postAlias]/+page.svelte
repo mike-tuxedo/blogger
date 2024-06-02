@@ -11,32 +11,50 @@
     /** @type {import('./$types').PageData} */
     export let data;
     const isnew = !Object.keys(data).length;
-    let postHeadline = !isnew ? data.headline : "";
-    let postAlias = !isnew ? data.alias : "";
-    let postCreated = !isnew ? data.created : Date.now();
-    let postPublished = !isnew ? !!data.published : false;
-    let postImage = !isnew ? data.image : "<img src='/favicon.png'/>";
-    let postDraftContent = !isnew ? data.draftContent : "";
-    let postPublishedContent = !isnew ? data.publishedContent : "";
-    let postShowHeroImage = !isnew ? !!data.showHeroImage : true;
+    let draftHeadline = !isnew ? data.draftHeadline : "";
+    let publishedHeadline = !isnew ? data.publishedHeadline : "";
+    let alias = !isnew ? data.alias : "";
+    let created = !isnew ? data.created : Date.now();
+    let published = !isnew ? !!data.published : false;
+    let draftImage = !isnew ? data.draftImage : "<img src='/favicon.png'/>";
+    let publishedImage = !isnew ? data.publishedImage : "<img src='/favicon.png'/>";
+    let draftContent = !isnew ? data.draftContent : "";
+    let publishedContent = !isnew ? data.publishedContent : "";
+    let showDraftHeroImage = !isnew ? !!data.showDraftHeroImage : true;
+    let showPublishedHeroImage = !isnew ? !!data.showPublishedHeroImage : true;
 
-    let initialHeadline = postHeadline;
-    let initialShowHeroImage = postShowHeroImage;
+    let initialDraftHeadline = draftHeadline;
+    let initialDraftImage = draftImage;
+    let initialDraftContent = draftContent;
+    let initialShowDraftHeroImage = showDraftHeroImage;
 
-    const saveDraft = async () => {
-        if (!postAlias) {
-            postAlias = transformTextToURL(postHeadline);
+    let draftChanged = false;
+    let publishedEqualsDraft = draftContent === publishedContent;
+
+    const updatePost = async () => {
+        if (!alias) {
+            alias = transformTextToURL(draftHeadline);
         }
 
+        initialDraftHeadline = draftHeadline;
+        initialDraftImage = draftImage;
+        initialDraftContent = draftContent;
+        initialShowDraftHeroImage = showDraftHeroImage;
+
         const post = {
-            headline: postHeadline,
-            alias: postAlias,
-            created: postCreated,
-            published: postPublished,
-            image: postImage,
-            draftContent: postDraftContent,
-            publishedContent: data.publishedContent,
-            showHeroImage: postShowHeroImage
+            draftHeadline,
+            publishedHeadline,
+            alias,
+            created,
+            published,
+            publishedImage,
+            draftImage,
+            draftContent,
+            publishedContent,
+            showDraftHeroImage,
+            showPublishedHeroImage,
+            metatitle: '',
+            metadescription: ''
         };
 
         try {
@@ -49,111 +67,43 @@
             });
             if (response.ok) {
                 console.log("post gespeichert");
+                draftChanged = false;
             } else {
                 const errorText = await response.text();
                 console.error(
                     `Error fetching data: ${response.status}`,
-                    errorText
+                    errorText,
                 );
                 throw new Error(
-                    `Error fetching data: ${response.status} ${errorText}`
+                    `Error fetching data: ${response.status} ${errorText}`,
                 );
             }
         } catch (error) {
             console.error("Error in JSON handling: ", error);
         }
+
+        checkForChanges();
     };
 
     const publishDraft = async () => {
-        postPublished = true;
-        postPublishedContent = postDraftContent;
-        initialShowHeroImage = postShowHeroImage;
-        initialHeadline = postHeadline;
+        published = true;
+        publishedHeadline = draftHeadline;
+        publishedImage = draftImage;
+        publishedContent = draftContent;
+        showPublishedHeroImage = showDraftHeroImage;
 
-        const post = {
-            headline: postHeadline,
-            alias: postAlias,
-            created: postCreated,
-            published: postPublished,
-            image: postImage,
-            draftContent: postDraftContent,
-            publishedContent: postDraftContent,
-            showHeroImage: postShowHeroImage
-        };
-
-        try {
-            const response = await fetch(`${$baseurl}/post.php`, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                method: "POST",
-                body: JSON.stringify(post),
-            });
-            if (response.ok) {
-                console.log("post published");
-            } else {
-                const errorText = await response.text();
-                console.error(
-                    `Error fetching data: ${response.status}`,
-                    errorText
-                );
-                throw new Error(
-                    `Error fetching data: ${response.status} ${errorText}`
-                );
-            }
-        } catch (error) {
-            console.error("Error in JSON handling: ", error);
-        }
+        await updatePost();
+        
+        checkForChanges();
     };
 
     const unpublish = async () => {
-        postPublished = false;
+        published = false;
 
-        const post = {
-            headline: postHeadline,
-            alias: postAlias,
-            created: postCreated,
-            published: postPublished,
-            image: postImage,
-            draftContent: postDraftContent,
-            publishedContent: postPublishedContent,
-            showHeroImage: postShowHeroImage
-        };
-
-        try {
-            const response = await fetch(`${$baseurl}/post.php`, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                method: "POST",
-                body: JSON.stringify(post),
-            });
-            if (response.ok) {
-                console.log("post unpublished");
-            } else {
-                const errorText = await response.text();
-                console.error(
-                    `Error fetching data: ${response.status}`,
-                    errorText
-                );
-                throw new Error(
-                    `Error fetching data: ${response.status} ${errorText}`
-                );
-            }
-        } catch (error) {
-            console.error("Error in JSON handling: ", error);
-        }
+        await updatePost();
+        
+        checkForChanges();
     };
-
-    let publishedState = "btn-outline";
-    $: if (!postPublished) {
-        publishedState = "btn-outline";
-    } else if (postDraftContent === postPublishedContent && postPublished && 
-    (postShowHeroImage === initialShowHeroImage) && (postHeadline === initialHeadline)) {
-        publishedState = "btn-success";
-    } else {
-        publishedState = "btn-warning";
-    }
 
     let showLightbox = false;
     let imgModalSrc = "";
@@ -174,6 +124,40 @@
             });
         }
     });
+
+    function checkForChanges() {
+        if (
+            draftHeadline === initialDraftHeadline &&
+            draftImage === initialDraftImage &&
+            draftContent === initialDraftContent &&
+            showDraftHeroImage === initialShowDraftHeroImage
+        ) {
+            draftChanged = false;
+        } else {
+            draftChanged = true;
+        }
+
+        if (
+            published &&
+            publishedHeadline === draftHeadline &&
+            publishedImage === draftImage &&
+            publishedContent === draftContent &&
+            showPublishedHeroImage === showDraftHeroImage
+        ) {
+            publishedEqualsDraft = true;
+        } else {
+            publishedEqualsDraft = false;
+        }
+    }
+
+    $: if (
+        draftHeadline ||
+        draftImage ||
+        draftContent ||
+        showDraftHeroImage
+    ) {
+        checkForChanges();
+    }
 </script>
 
 <button
@@ -203,16 +187,19 @@
     <div class="controls inline-flex gap-2 fixed bottom-4 right-5 z-30">
         <button
             class="btn btn-outline btn-sm bg-white"
-            on:click={saveDraft}
+            class:btn-warning={draftChanged}
+            on:click={updatePost}
             use:hotKeyAction={{ ctrl: true, code: "KeyS" }}>Save draft</button
         >
         <button
-            class="btn {publishedState} btn-sm"
+            class="btn btn-outline btn-sm"
+            class:btn-success={published && publishedEqualsDraft}
+            class:btn-warning={published && !publishedEqualsDraft}
             on:click={publishDraft}
             use:hotKeyAction={{ ctrl: true, code: "KeyP" }}
             >Publish draft</button
         >
-        {#if postPublished}
+        {#if published}
             <button
                 class="btn btn-outline btn-sm bg-white"
                 on:click={unpublish}
@@ -220,14 +207,18 @@
                 >Unpublish</button
             >
         {/if}
-        <Settings post={data} bind:alias={postAlias}/>
+        <Settings post={data} bind:alias={alias} />
     </div>
     <div class="relative min-h-10">
-        <button on:click={() => postShowHeroImage = !postShowHeroImage} class="absolute z-10 btn btn-primary top-4 right-4">Toggle heroimage</button>
-        {#if postShowHeroImage}
-        <div transition:customSlide>
-            <Image bind:str={postImage} htmlClass="heroimage"/>
-        </div>
+        <button
+            on:click={() => (showDraftHeroImage = !showDraftHeroImage)}
+            class="absolute z-10 btn btn-primary top-4 right-4"
+            >Toggle heroimage</button
+        >
+        {#if showDraftHeroImage}
+            <div transition:customSlide>
+                <Image bind:str={draftImage} htmlClass="heroimage" />
+            </div>
         {/if}
     </div>
     <textarea
@@ -237,23 +228,23 @@
         placeholder="Add some stuning headline ..."
         autofocus
         rows="1"
-        bind:value={postHeadline}
+        bind:value={draftHeadline}
     />
-    <Text bind:str={postDraftContent} />
+    <Text bind:str={draftContent} />
 {:else}
-    <div class:hero={postShowHeroImage}>
-        {#if postShowHeroImage}{@html postImage}{/if}
-        <h1 class="headline">{postHeadline}</h1>
+    <div class:hero={showPublishedHeroImage}>
+        {#if showPublishedHeroImage}{@html publishedImage}{/if}
+        <h1 class="headline">{publishedHeadline}</h1>
     </div>
-    {@html postPublishedContent}
+    {@html publishedContent}
 {/if}
 
 {#if showLightbox}
     <div class="modal" style="opacity: 1">
-        <img
-            src={imgModalSrc}
-            alt={imgModalAlt}
-        />
-        <button class="btn btn-sm btn-circle btn-secondary absolute right-5 top-5" on:click={() => (showLightbox = !showLightbox)}>✕</button>
+        <img src={imgModalSrc} alt={imgModalAlt} />
+        <button
+            class="btn btn-sm btn-circle btn-secondary absolute right-5 top-5"
+            on:click={() => (showLightbox = !showLightbox)}>✕</button
+        >
     </div>
 {/if}

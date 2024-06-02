@@ -12,8 +12,8 @@ if (!$db) {
     die("Connection failed: " . $db->lastErrorMsg());
 }
 
-// Create tables if not exists
-$db->exec('CREATE TABLE IF NOT EXISTS posts(headline TEXT, alias TEXT, created INTEGER, published INTEGER, showHeroImage INTEGER, image TEXT, draftContent BLOB, publishedContent BLOB, PRIMARY KEY (created))');
+// Create tables if not exists with the new fields for draft and published versions
+$db->exec('CREATE TABLE IF NOT EXISTS posts(draftHeadline TEXT, publishedHeadline TEXT, alias TEXT, created INTEGER, published INTEGER, showDraftHeroImage INTEGER, showPublishedHeroImage INTEGER, draftImage TEXT, publishedImage TEXT, draftContent BLOB, publishedContent BOMB,  metatitle TEXT, metadescription TEXT, PRIMARY KEY (created))');
 $db->exec('CREATE TABLE IF NOT EXISTS users(name TEXT PRIMARY KEY, password TEXT)');
 
 // Handle GET requests for /api/posts
@@ -23,20 +23,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $postPublished = $_GET['published'];
 
         if ($postPublished !== null) {
-            $stmt = $db->prepare('SELECT * FROM posts WHERE alias = :alias AND published = :published');
+            $stmt = $db->prepare('SELECT draftHeadline, publishedHeadline, alias, created, published, showDraftHeroImage, showPublishedHeroImage, draftImage, publishedImage, draftContent, publishedContent, metatitle, metadescription FROM posts WHERE alias = :alias AND published = :published');
             $stmt->bindValue(':alias', $postAlias, SQLITE3_TEXT);
             $stmt->bindValue(':published', $postPublished, SQLITE3_INTEGER);
         } else {
-            $stmt = $db->prepare('SELECT * FROM posts WHERE alias = :alias');
+            $stmt = $db->prepare('SELECT draftHeadline, publishedHeadline, alias, created, published, showDraftHeroImage, showPublishedHeroImage, draftImage, publishedImage, draftContent, publishedContent, metatitle, metadescription FROM posts WHERE alias = :alias');
             $stmt->bindValue(':alias', $postAlias, SQLITE3_TEXT);
         }
     } else {
         if ($_GET['published'] !== null) {
             $postPublished = $_GET['published'];
-            $stmt = $db->prepare('SELECT * FROM posts WHERE published = :published');
+            $stmt = $db->prepare('SELECT draftHeadline, publishedHeadline, alias, created, published, showDraftHeroImage, showPublishedHeroImage, draftImage, publishedImage, draftContent, publishedContent, metatitle, metadescription FROM posts WHERE published = :published');
             $stmt->bindValue(':published', $postPublished, SQLITE3_INTEGER);
         } else {
-            $stmt = $db->prepare('SELECT * FROM posts');
+            $stmt = $db->prepare('SELECT draftHeadline, publishedHeadline, alias, created, published, showDraftHeroImage, showPublishedHeroImage, draftImage, publishedImage, draftContent, publishedContent, metatitle, metadescription FROM posts');
         }
     }
 

@@ -12,8 +12,8 @@ if (!$db) {
     die("Connection failed: " . $db->lastErrorMsg());
 }
 
-// Create tables if not exists
-$db->exec('CREATE TABLE IF NOT EXISTS posts(headline TEXT, alias TEXT, created INTEGER, published INTEGER, showHeroImage INTEGER, showHeroImage INTEGER, image TEXT, draftContent BLOB, publishedContent BLOB, metatitle TEXT, metadescription TEXT, PRIMARY KEY (created))');
+// Create tables if not exists with updated fields
+$db->exec('CREATE TABLE IF NOT EXISTS posts(draftHeadline TEXT, publishedHeadline TEXT, alias TEXT, created INTEGER, published INTEGER, showDraftHeroImage INTEGER, showPublishedHeroImage INTEGER, draftImage TEXT, publishedImage TEXT, draftContent BLOB, publishedContent BLOB, metatitle TEXT, metadescription TEXT, PRIMARY KEY (created))');
 $db->exec('CREATE TABLE IF NOT EXISTS users(name TEXT PRIMARY KEY, password TEXT)');
 
 // Handle POST requests for /api/post
@@ -28,19 +28,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $stmt->execute();
     $count = 0;
 
-    $stmt = $db->prepare('REPLACE INTO posts(headline, alias, created, published, showHeroImage, image, draftContent, publishedContent) VALUES (:headline, :alias, :created, :published, :showHeroImage, :image, :draftContent, :publishedContent)');
+    $stmt = $db->prepare('REPLACE INTO posts(draftHeadline, publishedHeadline, alias, created, published, showDraftHeroImage, showPublishedHeroImage, draftImage, publishedImage, draftContent, publishedContent, metatitle, metadescription) VALUES (:draftHeadline, :publishedHeadline, :alias, :created, :published, :showDraftHeroImage, :showPublishedHeroImage, :draftImage, :publishedImage, :draftContent, :publishedContent, :metatitle, :metadescription)');
 
     if (!$stmt) {
         echo "Post could not be created";
         die("Failed to prepare statement: " . $db->lastErrorMsg());
     }
     
-    $stmt->bindValue(':headline', $postData['headline'], SQLITE3_TEXT);
+    $stmt->bindValue(':draftHeadline', $postData['draftHeadline'], SQLITE3_TEXT);
+    $stmt->bindValue(':publishedHeadline', $postData['publishedHeadline'], SQLITE3_TEXT);
     $stmt->bindValue(':alias', $alias, SQLITE3_TEXT);
     $stmt->bindValue(':created', $created, SQLITE3_INTEGER);
     $stmt->bindValue(':published', $postData['published'], SQLITE3_INTEGER);
-    $stmt->bindValue(':showHeroImage', $postData['showHeroImage'], SQLITE3_INTEGER);
-    $stmt->bindValue(':image', $postData['image'], SQLITE3_TEXT);
+    $stmt->bindValue(':showDraftHeroImage', $postData['showDraftHeroImage'], SQLITE3_INTEGER);
+    $stmt->bindValue(':showPublishedHeroImage', $postData['showPublishedHeroImage'], SQLITE3_INTEGER);
+    $stmt->bindValue(':draftImage', $postData['draftImage'], SQLITE3_TEXT);
+    $stmt->bindValue(':publishedImage', $postData['publishedImage'], SQLITE3_TEXT);
     $stmt->bindValue(':draftContent', $postData['draftContent'], SQLITE3_BLOB);
     $stmt->bindValue(':publishedContent', $postData['publishedContent'], SQLITE3_BLOB);
     $stmt->bindValue(':metatitle', $postData['metatitle'], SQLITE3_TEXT);
@@ -72,5 +75,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $db->close();
     exit();
 }
-
 ?>

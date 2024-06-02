@@ -59,7 +59,8 @@
 
 <h4 class="mt-6">Todos</h4>
 <ol>
-    <li>Change to svelte5, use runes and so on</li>
+    <li><del>Change to svelte5, use runes and so on</del> Some packages do not work with svelte5 at the moment.</li>
+    <li>Fix getting a post by alias. A post has to be fetched by created timestamp</li>
     <li>Implement a category system</li>
     <li>Add real login, check if account exist and add admin if not.</li>
     <li>Overwrite Images with the same name on the server, instead of uploading it multiple times</li>
@@ -135,13 +136,13 @@
                         href="/{post.alias}"
                         data-post-created={post.created}
                     >
-                        {#if post.showHeroImage}
-                            {@html post.image}
+                        {#if post.showDraftHeroImage}
+                            {@html post.draftImage}
                         {:else}
                         <img src="favicon.png" alt="placeholder">
                         {/if}
                         <div class="post-info">
-                            <h4>{post.headline}</h4>
+                            <h4>{post.draftHeadline}</h4>
                             <span>{toReadableDate(post.created)}</span>
                         </div>
                     </a>
@@ -179,9 +180,9 @@
                 href="/{post.alias}"
                 data-post-created={post.created}
             >
-                {@html post.image}
+                {@html post.publishedImage}
                 <div class="post-info">
-                    <h4>{post.headline}</h4>
+                    <h4>{post.publishedHeadline}</h4>
                     <span>{post.created}</span>
                 </div>
             </a>
