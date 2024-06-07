@@ -45,3 +45,15 @@ This runs sveltekit as normal and also turns on a simple php server to serve the
 
 ### Attention:
 Don't forget to activate the sqlite and Imagick extensions in your php.ini (on my Manjaro linux it was in `/etc/php/php.ini`). Yout have to uncomment or add `extension=sqlite3` and `extension=imagick`.
+
+
+## Updating
+First, ALWAYS BACKUP YOUR FILES! Take a copy of all files and folders and move itit to a separate place on the server, or download it.
+
+That sayd ;-) , depending on how you installed blogyourmind, there are some possible flows.
+
+### Installed by zip on a php server
+If you just downloaded the zip and unzipped it to your php-server, than just download the newest one and overwrite your existing files and folders expect the content folder. Your entire blog content is in the content folder!
+
+### Installed by gitrepo
+Just take a copy of content folder, pull changes and copy back your prevous backed up content folder, because `git pull` will overwrite the content folder.
