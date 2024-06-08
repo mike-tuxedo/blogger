@@ -14,25 +14,42 @@ if (!$db) {
 
 // Create tables if not exists with updated fields
 $db->exec('CREATE TABLE IF NOT EXISTS posts(draftHeadline TEXT, publishedHeadline TEXT, alias TEXT, created INTEGER, published INTEGER, showDraftHeroImage INTEGER, showPublishedHeroImage INTEGER, draftImage TEXT, publishedImage TEXT, draftContent BLOB, publishedContent BLOB, metatitle TEXT, metadescription TEXT, PRIMARY KEY (created))');
-$db->exec('CREATE TABLE IF NOT EXISTS users(name TEXT PRIMARY KEY, password TEXT)');
 
 // Handle POST requests for /api/post
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postData = json_decode(file_get_contents('php://input'), true);
-    $created = isset($postData['created']) ? $postData['created'] : time();
 
+    if (!isset($postData['created'])) {
+        echo json_encode([
+            'error' => true,
+            'message' => 'Createdate missing.'
+        ]);
+        exit();
+    }
+    
     // Check if alias already exists, if yes, append a number to make it unique
+    $created = $postData['created'];
     $alias = $postData['alias'];
-    $stmt = $db->prepare('SELECT alias FROM posts WHERE alias = :alias');
+    $stmt = $db->prepare('SELECT alias FROM posts WHERE alias = :alias AND created != :created');
     $stmt->bindValue(':alias', $alias, SQLITE3_TEXT);
+    $stmt->bindValue(':created', $created, SQLITE3_INTEGER);
     $result = $stmt->execute();
-    $count = 0;
+    $entry = $result->fetchArray(SQLITE3_ASSOC);
+    if ($entry) {
+        echo json_encode([
+            'error' => true,
+            'message' => 'Same alias already.'
+        ]);
+        exit();
+    }
 
     $stmt = $db->prepare('REPLACE INTO posts(draftHeadline, publishedHeadline, alias, created, published, showDraftHeroImage, showPublishedHeroImage, draftImage, publishedImage, draftContent, publishedContent, metatitle, metadescription) VALUES (:draftHeadline, :publishedHeadline, :alias, :created, :published, :showDraftHeroImage, :showPublishedHeroImage, :draftImage, :publishedImage, :draftContent, :publishedContent, :metatitle, :metadescription)');
-
     if (!$stmt) {
-        echo "Post could not be created";
-        die("Failed to prepare statement: " . $db->lastErrorMsg());
+        echo json_encode([
+            'error' => true,
+            'message' => "Failed to prepare statement: " . $db->lastErrorMsg()
+        ]);
+        exit();
     }
     
     $stmt->bindValue(':draftHeadline', $postData['draftHeadline'], SQLITE3_TEXT);
@@ -51,7 +68,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	
     $stmt->execute();
 
-    echo "Post replaced successfully";
+    echo json_encode([
+        'error' => false,
+        'message' => 'Post created or replaced successfully.'
+    ]);
 
     $db->close();
 } else if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {

@@ -7,6 +7,7 @@
     import { onMount } from "svelte";
     import { hotKeyAction } from "svelte-legos";
     import { customSlide, transformTextToURL } from "$lib/utils.js";
+    import { fly } from "svelte/transition";
 
     /** @type {import('./$types').PageData} */
     export let data;
@@ -17,7 +18,9 @@
     let created = !isnew ? data.created : Date.now();
     let published = !isnew ? !!data.published : false;
     let draftImage = !isnew ? data.draftImage : "<img src='/favicon.png'/>";
-    let publishedImage = !isnew ? data.publishedImage : "<img src='/favicon.png'/>";
+    let publishedImage = !isnew
+        ? data.publishedImage
+        : "<img src='/favicon.png'/>";
     let draftContent = !isnew ? data.draftContent : "";
     let publishedContent = !isnew ? data.publishedContent : "";
     let showDraftHeroImage = !isnew ? !!data.showDraftHeroImage : true;
@@ -31,15 +34,15 @@
     let draftChanged = false;
     let publishedEqualsDraft = draftContent === publishedContent;
 
-    const updatePost = async () => {
+    let closeSetting;
+    let aliasError = false;
+
+    const createUpdatePost = async () => {
+        closeSetting();
+
         if (!alias) {
             alias = transformTextToURL(draftHeadline);
         }
-
-        initialDraftHeadline = draftHeadline;
-        initialDraftImage = draftImage;
-        initialDraftContent = draftContent;
-        initialShowDraftHeroImage = showDraftHeroImage;
 
         const post = {
             draftHeadline,
@@ -53,8 +56,8 @@
             publishedContent,
             showDraftHeroImage,
             showPublishedHeroImage,
-            metatitle: '',
-            metadescription: ''
+            metatitle: "",
+            metadescription: "",
         };
 
         try {
@@ -65,21 +68,30 @@
                 method: "POST",
                 body: JSON.stringify(post),
             });
+
             if (response.ok) {
-                console.log("post gespeichert");
-                draftChanged = false;
+                const data = await response.json(); // Verarbeitet die Antwort als JSON
+                if (data.error) {
+                    console.log("Server response:", data);
+                    // aliasErrorModal.show();
+                    aliasError = true;
+                } else {
+                    console.log("post gespeichert");
+                    initialDraftHeadline = draftHeadline;
+                    initialDraftImage = draftImage;
+                    initialDraftContent = draftContent;
+                    initialShowDraftHeroImage = showDraftHeroImage;
+                    // draftChanged = false;
+                }
             } else {
-                const errorText = await response.text();
+                const errorText = await response.text(); // Holt den Text der Fehlerantwort
                 console.error(
                     `Error fetching data: ${response.status}`,
                     errorText,
                 );
-                throw new Error(
-                    `Error fetching data: ${response.status} ${errorText}`,
-                );
             }
         } catch (error) {
-            console.error("Error in JSON handling: ", error);
+            console.error("Error in network or JSON handling: ", error);
         }
 
         checkForChanges();
@@ -92,16 +104,16 @@
         publishedContent = draftContent;
         showPublishedHeroImage = showDraftHeroImage;
 
-        await updatePost();
-        
+        await createUpdatePost();
+
         checkForChanges();
     };
 
     const unpublish = async () => {
         published = false;
 
-        await updatePost();
-        
+        await createUpdatePost();
+
         checkForChanges();
     };
 
@@ -150,12 +162,7 @@
         }
     }
 
-    $: if (
-        draftHeadline ||
-        draftImage ||
-        draftContent ||
-        showDraftHeroImage
-    ) {
+    $: if (draftHeadline || draftImage || draftContent || showDraftHeroImage) {
         checkForChanges();
     }
 </script>
@@ -188,13 +195,15 @@
         <button
             class="btn btn-outline btn-sm bg-white"
             class:btn-warning={draftChanged}
-            on:click={updatePost}
+            disabled={!draftHeadline.length}
+            on:click={createUpdatePost}
             use:hotKeyAction={{ ctrl: true, code: "KeyS" }}>Save draft</button
         >
         <button
             class="btn btn-outline btn-sm"
             class:btn-success={published && publishedEqualsDraft}
             class:btn-warning={published && !publishedEqualsDraft}
+            disabled={!draftHeadline.length}
             on:click={publishDraft}
             use:hotKeyAction={{ ctrl: true, code: "KeyP" }}
             >Publish draft</button
@@ -207,7 +216,7 @@
                 >Unpublish</button
             >
         {/if}
-        <Settings post={data} bind:alias={alias} />
+        <Settings post={data} bind:alias bind:close={closeSetting}/>
     </div>
     <div class="relative min-h-10">
         <button
@@ -247,4 +256,14 @@
             on:click={() => (showLightbox = !showLightbox)}>✕</button
         >
     </div>
+{/if}
+
+{#if aliasError}
+<div role="alert" class="alert alert-error shadow-lg" transition:fly={{ y: 150 }}>
+    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" on:click={() => aliasError = false }>✕</button>
+    <span>
+        Your <b>alias</b> is already in use. Please open settings (bottom right)
+        and change the alias.
+    </span>
+</div>
 {/if}

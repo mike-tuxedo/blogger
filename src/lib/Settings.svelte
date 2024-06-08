@@ -2,6 +2,10 @@
 <script>
   export let post = null;
   export let alias;
+  export let close = () => {
+    modal.close();
+  }
+  let modal;
   let metadescription = '';
   let metatitle = '';
 </script>
@@ -15,7 +19,7 @@
 </button>
 
 <!-- You can open the modal using ID.showModal() method -->
-<dialog id="my_modal_3" class="modal">
+<dialog id="my_modal_3" class="modal" bind:this={modal}>
   <div class="modal-box">
     <form method="dialog">
       <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>

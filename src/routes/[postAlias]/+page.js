@@ -16,18 +16,12 @@ export async function load({ fetch, params }) {
 
     let post = null;
     const _user = get(user);
-	// let url = `https://blogger-server.mike.fm-media-staging.at/posts?alias=${params.postAlias}`;
-
-    // das muss ich mit dem timstamp bzw created machen, sonst kann da was falsches kommen
 	let url = `${get(baseurl)}/posts.php?alias=${params.postAlias}`;
 	if (!_user) {
 		url += '&published=1'
 	}
 
-    console.log(url);
-
     if (params.postAlias === 'new') {
-        console.log('new')
         return null;
     } else {
         const response = await fetch(url);
