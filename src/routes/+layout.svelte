@@ -57,39 +57,39 @@
 
 <svelte:window bind:innerWidth />
 
-{#if $user}
-    <button
-        class="btn-logout btn btn-circle btn-outline bg-white btn-sm fixed bottom-4 left-5 z-30"
-        on:click={() => ($user = null)}
-    >
-        <svg
-            class="w-5 h-5"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            fill="none"
-            viewBox="0 0 24 24"
-        >
-            <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M20 12H8m12 0-4 4m4-4-4-4M9 4H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h2"
-            />
-        </svg>
-    </button>
-{/if}
+{#if $user}{/if}
 {#if $page.url.pathname !== "/login"}
     <nav class="nav-main">
-        <img src="/logo.svg" class="logo" alt="Logo" />
-        <div>
-            <a href="/">home</a>
+        <a href="/"><img src="/logo.svg" class="logo" alt="Logo" /></a>
+        <div class="main-menu">
+            <a href="/" class="btn btn-sm btn-secondary">home</a>
             {#if $user}
-                <a href="/" on:click={() => ($user = null)}>logout</a>
+                <button
+                    class="btn btn-sm btn-secondary btn-circle"
+                    on:click={() => ($user = null)}
+                >
+                    <svg
+                        class="w-5 h-5"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M20 12H8m12 0-4 4m4-4-4-4M9 4H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h2"
+                        />
+                    </svg>
+                </button>
             {:else}
-                <a href="/login">login</a>
+                <a href="/login" class="btn btn-sm btn-secondary"
+                    >login</a
+                >
             {/if}
         </div>
     </nav>
@@ -97,6 +97,3 @@
 <main class="content {mainClass} prose">
     <slot />
 </main>
-
-<style lang="scss">
-</style>

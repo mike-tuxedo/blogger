@@ -18,3 +18,6 @@ useLocalStorage(user, 'user');
 export const baseurl = writable(null);
 
 export const usePhpApi = writable(true);
+
+export const postsView = writable('grid'); // grid or table
+useLocalStorage(postsView, 'postsView');

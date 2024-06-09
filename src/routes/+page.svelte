@@ -1,13 +1,87 @@
 <script>
     import Tableview from "$lib/Tableview.svelte";
     import Indicator from "$lib/Indicator.svelte";
-    import { user, baseurl } from "$lib/store.js";
+    import { user, baseurl, postsView } from "$lib/store.js";
     import { onMount } from "svelte";
-    import { toReadableDate } from "$lib/utils.js";
+    import { getState, toReadableDate } from "$lib/utils.js";
+    import { slide } from "svelte/transition";
+    import HomeSettings from "$lib/HomeSettings.svelte";
+    import { hotKeyAction } from "svelte-legos";
+    import Text from "$lib/Text.svelte";
 
     /** @type {import('./$types').PageData} */
     export let data;
-    let tableview = false;
+    $: posts = data.posts;
+
+    let closeSetting;
+    let tableview = $postsView === "table";
+    $: $postsView = tableview ? "table" : "grid";
+
+    console.log(data);
+
+    /** Start content */
+    let metatitle = data.startpage ? data.startpage.metatitle : "";
+    let metadescription = data.startpage ? data.startpage.metadescription : "";
+    let theme = data.startpage ? data.startpage.theme : "";
+    let draftContent = data.startpage ? data.startpage.draftContent : "";
+    let publishedContent = data.startpage
+        ? data.startpage.publishedContent
+        : "";
+    let initialDraftContent = draftContent;
+    let publishedEqualsDraft = draftContent === publishedContent;
+    let draftChanged = false;
+
+    const createUpdateStartpage = async () => {
+        closeSetting();
+
+        const post = {
+            draftContent,
+            publishedContent,
+            metatitle: metatitle,
+            metadescription: metadescription,
+            theme: theme,
+        };
+
+        try {
+            const response = await fetch(`${$baseurl}/startpage.php`, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                method: "POST",
+                body: JSON.stringify(post),
+            });
+
+            if (response.ok) {
+                const data = await response.json(); // Verarbeitet die Antwort als JSON
+                if (data.error) {
+                    console.log("Server response:", data);
+                    aliasError = true;
+                } else {
+                    console.log("Startpage gespeichert");
+                    initialDraftContent = draftContent;
+                }
+            } else {
+                const errorText = await response.text(); // Holt den Text der Fehlerantwort
+                console.error(
+                    `Error fetching data: ${response.status}`,
+                    errorText,
+                );
+            }
+        } catch (error) {
+            console.error("Error in network or JSON handling: ", error);
+        }
+
+        checkForChanges();
+    };
+
+    const publishDraft = async () => {
+        publishedContent = draftContent;
+
+        await createUpdateStartpage();
+
+        checkForChanges();
+    };
+    /** End content*/
 
     const deletePost = async (created) => {
         const post = {
@@ -24,15 +98,17 @@
             });
             if (response.ok) {
                 console.log("post gelöscht");
-                data.posts = data.posts.filter(post => post.created !== created);
+                data.posts = data.posts.filter(
+                    (post) => post.created !== created,
+                );
             } else {
                 const errorText = await response.text();
                 console.error(
                     `Error fetching data: ${response.status}`,
-                    errorText
+                    errorText,
                 );
                 throw new Error(
-                    `Error fetching data: ${response.status} ${errorText}`
+                    `Error fetching data: ${response.status} ${errorText}`,
                 );
             }
         } catch (error) {
@@ -40,14 +116,23 @@
         }
     };
 
-    const getState = (post) => {
-        if (!post.published) {
-            return "draft";
-        } else if (post.draftContent === post.publishedContent && post.published) {
-            return "published";
-        } else {
-            return "changed";
-        }
+    const filterPosts = (query) => {
+        console.log(query);
+        posts = data.posts.filter((cur) => {
+            return (
+                cur.publishedHeadline
+                    .toLowerCase()
+                    .search(query.toLowerCase()) >= 0 ||
+                cur.publishedContent
+                    .toLowerCase()
+                    .search(query.toLowerCase()) >= 0
+            );
+        });
+    };
+
+    function checkForChanges() {
+        draftChanged = draftContent !== initialDraftContent;
+        publishedEqualsDraft = publishedContent === draftContent;
     }
 
     onMount(() => {
@@ -56,15 +141,21 @@
         document.body.classList.remove("post");
     });
 </script>
-
+<!-- 
 <h4 class="mt-6">Todos</h4>
 <ol>
     <li>Add real login, check if account exist and add admin if not.</li>
     <li>Implement a category system</li>
     <li>Add themechanger</li>
-    <li>Overwrite Images with the same name on the server, instead of uploading it multiple times</li>
+    <li>
+        Overwrite Images with the same name on the server, instead of
+        uploading it multiple times
+    </li>
     <li>Implement a search function</li>
-    <li>Check if no posts are available, check if an user exists, if not show modal to switch to login page and create user.</li>
+    <li>
+        Check if no posts are available, check if an user exists, if not
+        show modal to switch to login page and create user.
+    </li>
     <li>
         Enhance Settings
         <ol>
@@ -75,70 +166,110 @@
         </ol>
     </li>
 </ol>
-<hr>
+<hr /> -->
 
-<h1>Welcome to your blog.</h1>
-<p>You may find any topic here, just search around through the lupe or browse my categories.</p>
-<h3>ENJOY when it's ready! :)</h3>
+<!-- Backup Text -->
+<!-- <h1>Welcome to Blog Your Mind.</h1>
+    <p>
+        This is your startpage and the content you are reading is editable.
+        Just go to your login page under <strong
+        ><em>https://your-domain-that-i-cant.know/login</em></strong
+        > and setup your admin profile and than come back here and start editing
+        this content as you like.
+    </p>
+    <p>
+        Under this content you will find your posts. Just click on the plus
+        and create your first post.
+    </p>
+    <h3>I hope you will have fun with it, ENJOY! :)</h3> -->
+{#if publishedContent}
+    <Text bind:str={publishedContent} />
+{/if}
 
 {#if $user}
-    <label
-        class="btn btn-circle btn-outline btn-sm swap swap-rotate fixed bottom-4 right-5"
-    >
-        <input type="checkbox" bind:checked={tableview} />
-        <svg
-            class="w-5 h-5 swap-on"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            fill="none"
-            viewBox="0 0 24 24"
+    {#if draftContent}
+        <Text bind:str={draftContent} />
+    {/if}
+
+    <div class="controls inline-flex gap-2 fixed bottom-4 right-5 z-30">
+        <button
+            class="btn btn-outline btn-sm bg-white"
+            class:btn-warning={draftChanged}
+            on:click={createUpdateStartpage}
+            use:hotKeyAction={{ ctrl: true, code: "KeyS" }}>Save draft</button
         >
-            <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9.143 4H4.857A.857.857 0 0 0 4 4.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 10 9.143V4.857A.857.857 0 0 0 9.143 4Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 20 9.143V4.857A.857.857 0 0 0 19.143 4Zm-10 10H4.857a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286A.857.857 0 0 0 9.143 14Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286a.857.857 0 0 0-.857-.857Z"
-            />
-        </svg>
-        <svg
-            class="w-5 h-5 swap-off"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            fill="none"
-            viewBox="0 0 24 24"
+        <button
+            class="btn btn-outline btn-sm"
+            class:btn-success={publishedEqualsDraft}
+            class:btn-warning={!publishedEqualsDraft}
+            on:click={publishDraft}
+            use:hotKeyAction={{ ctrl: true, code: "KeyP" }}
+            >Publish draft</button
         >
-            <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-width="2"
-                d="M9 8h10M9 12h10M9 16h10M4.99 8H5m-.02 4h.01m0 4H5"
-            />
-        </svg>
-    </label>
+        <label class="btn btn-circle btn-outline btn-sm swap swap-rotate">
+            <input type="checkbox" bind:checked={tableview} />
+            <svg
+                class="w-5 h-5 swap-on"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9.143 4H4.857A.857.857 0 0 0 4 4.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 10 9.143V4.857A.857.857 0 0 0 9.143 4Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 20 9.143V4.857A.857.857 0 0 0 19.143 4Zm-10 10H4.857a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286A.857.857 0 0 0 9.143 14Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286a.857.857 0 0 0-.857-.857Z"
+                />
+            </svg>
+            <svg
+                class="w-5 h-5 swap-off"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-width="2"
+                    d="M9 8h10M9 12h10M9 16h10M4.99 8H5m-.02 4h.01m0 4H5"
+                />
+            </svg>
+        </label>
+        <HomeSettings
+            bind:close={closeSetting}
+            bind:metatitle
+            bind:metadescription
+            bind:theme
+        />
+    </div>
 
     {#if tableview}
-        <Tableview data={data.posts} />
+        <nav class="posts tableview">
+            <Tableview data={posts} {deletePost} />
+        </nav>
     {:else}
-        <nav class="posts">
-            <a class="new" href="/new">
+        <nav class="posts gridview">
+            <a class="post new" href="/new">
                 <div>+</div>
             </a>
-            {#each data.posts as post}
+            {#each posts as post}
                 <div class="post relative">
-                    <Indicator state={getState(post)}/>
-                    <a
-                        href="/{post.alias}"
-                        data-post-created={post.created}
-                    >
+                    <Indicator
+                        state={getState(post)}
+                        htmlClass="absolute z-10 top-2 left-2"
+                    />
+                    <a href="/{post.alias}" data-post-created={post.created}>
                         {#if post.showDraftHeroImage}
                             {@html post.draftImage}
                         {:else}
-                        <img src="favicon.png" alt="placeholder">
+                            <img src="favicon.png" alt="placeholder" />
                         {/if}
                         <div class="post-info">
                             <h4>{post.draftHeadline}</h4>
@@ -172,17 +303,39 @@
         </nav>
     {/if}
 {:else}
-    <nav class="posts">
-        {#each data.posts as post}
+    <label
+        class="input input-bordered flex items-center gap-2 w-1/2 ml-auto mb-8"
+    >
+        <input
+            type="text"
+            class="grow"
+            placeholder="Search"
+            on:keyup={(e) => filterPosts(e.target.value)}
+        />
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 16 16"
+            fill="currentColor"
+            class="w-4 h-4 opacity-70"
+            ><path
+                fill-rule="evenodd"
+                d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                clip-rule="evenodd"
+            /></svg
+        >
+    </label>
+    <nav class="posts gridview">
+        {#each posts as post}
             <a
                 class="post"
                 href="/{post.alias}"
                 data-post-created={post.created}
+                transition:slide
             >
                 {@html post.publishedImage}
                 <div class="post-info">
                     <h4>{post.publishedHeadline}</h4>
-                    <span>{post.created}</span>
+                    <span>{toReadableDate(post.created)}</span>
                 </div>
             </a>
         {/each}

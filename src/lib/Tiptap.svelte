@@ -79,13 +79,17 @@
     });
 
     onDestroy(() => {
+        console.log('destroy tiptap?', editorElement);
         if (editor) {
             editor.destroy();
         }
-        editorElement.removeEventListener("paste", handlePaste);
-        editorElement.removeEventListener("drop", handleDrop);
-        editorElement.addEventListener("click", handleClick);
-        editorElement.addEventListener("mousedown", handleMouseDown);
+
+        if (editorElement) {
+            editorElement.removeEventListener("paste", handlePaste);
+            editorElement.removeEventListener("drop", handleDrop);
+            editorElement.addEventListener("click", handleClick);
+            editorElement.addEventListener("mousedown", handleMouseDown);
+        }
     });
 
     function setSelectedNode(event) {
@@ -548,6 +552,3 @@
 
     <div bind:this={editorElement} class="tiptap-editor"></div>
 </div>
-
-<style lang="scss">
-</style>

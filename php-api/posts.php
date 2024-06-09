@@ -33,10 +33,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     } else {
         if ($_GET['published'] !== null) {
             $postPublished = $_GET['published'];
-            $stmt = $db->prepare('SELECT draftHeadline, publishedHeadline, alias, created, published, showDraftHeroImage, showPublishedHeroImage, draftImage, publishedImage, draftContent, publishedContent, metatitle, metadescription FROM posts WHERE published = :published');
+            $stmt = $db->prepare('SELECT draftHeadline, publishedHeadline, alias, created, published, showDraftHeroImage, showPublishedHeroImage, draftImage, publishedImage, draftContent, publishedContent, metatitle, metadescription FROM posts WHERE published = :published ORDER BY created DESC');
             $stmt->bindValue(':published', $postPublished, SQLITE3_INTEGER);
         } else {
-            $stmt = $db->prepare('SELECT draftHeadline, publishedHeadline, alias, created, published, showDraftHeroImage, showPublishedHeroImage, draftImage, publishedImage, draftContent, publishedContent, metatitle, metadescription FROM posts');
+            $stmt = $db->prepare('SELECT draftHeadline, publishedHeadline, alias, created, published, showDraftHeroImage, showPublishedHeroImage, draftImage, publishedImage, draftContent, publishedContent, metatitle, metadescription FROM posts ORDER BY created DESC');
         }
     }
 

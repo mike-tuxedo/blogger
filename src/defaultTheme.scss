@@ -13,7 +13,7 @@ body.defaultTheme {
         line-height: 80px;
         margin: 0 auto;
         background-color: #333;
-        padding: 0 calc((100vw - $lgBreakpoint)/2);
+        padding: 10px calc((100vw - $lgBreakpoint)/2);
         position: sticky;
         z-index: 20;
         top: 0;
@@ -21,11 +21,10 @@ body.defaultTheme {
         .logo {
             width: 50px;
         }
-
-        a {
-            text-decoration: none;
-            color: white;
-            padding: 12px 20px;
+        .main-menu {
+            align-items: center;
+            display: flex;
+            gap: 20px;
         }
     }
 
@@ -34,14 +33,13 @@ body.defaultTheme {
         max-width: $lgBreakpoint;
         width: 100%;
         margin: 0 auto;
-        padding: 20px;
+        padding: 60px 20px;
         box-sizing: border-box;
 
         /** Posts */
-        .posts {
+        .posts.gridview {
             display: flex;
             flex-wrap: wrap;
-
             gap: 20px;
 
             .new {
@@ -67,8 +65,7 @@ body.defaultTheme {
                 }
             }
 
-            .post,
-            .new {
+            .post {
                 position: relative;
                 text-decoration: none;
                 color: $secondary;

@@ -3,7 +3,7 @@
     import Image from "$lib/Image.svelte";
     import Text from "$lib/Text.svelte";
     import { user, baseurl } from "$lib/store.js";
-    import Settings from "$lib/Settings.svelte";
+    import PostSettings from "$lib/PostSettings.svelte";
     import { onMount } from "svelte";
     import { hotKeyAction } from "svelte-legos";
     import { customSlide, transformTextToURL } from "$lib/utils.js";
@@ -168,7 +168,7 @@
 </script>
 
 <button
-    class="btn btn-outline btn-secondary fixed left-4 top-8"
+    class="btn btn-outline btn-secondary fixed left-4 top-20"
     on:click={() => goto("/")}
     use:hotKeyAction={{ ctrl: true, code: "Backspace" }}
 >
@@ -216,7 +216,7 @@
                 >Unpublish</button
             >
         {/if}
-        <Settings post={data} bind:alias bind:close={closeSetting}/>
+        <PostSettings post={data} bind:alias bind:close={closeSetting}/>
     </div>
     <div class="relative min-h-10">
         <button

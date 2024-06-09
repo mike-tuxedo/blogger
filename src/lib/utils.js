@@ -63,3 +63,13 @@ export function customSlide(node, { delay = 0, duration = 400, easing = cubicOut
 			`border-${secondary_properties[1]}-width: ${t * border_width_end_value}px;`
 	};
 }
+
+export const getState = (post) => {
+	if (!post.published) {
+		return "draft";
+	} else if (post.draftContent === post.publishedContent && post.published) {
+		return "published";
+	} else {
+		return "changed";
+	}
+}

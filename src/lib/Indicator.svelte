@@ -1,11 +1,18 @@
 <script>
     export let state = "";
+    export let htmlClass = "";
 </script>
 
 {#if state === "draft"}
-    <div class="btn btn-circle btn-xs bg-info absolute z-10 top-2 left-2"></div>
+    <div class="inline-block w-8 h-8 bg-warning border-none rounded-full {htmlClass} tooltip" data-tip="Post is not published."></div>
 {:else if state === "published"}
-    <div class="btn btn-circle btn-xs bg-success absolute z-10 top-2 left-2"></div>
+    <div class="inline-block w-8 h-8 bg-success border-none rounded-full {htmlClass} tooltip" data-tip="Post is published."></div>
 {:else if state === "changed"}
-    <div class="btn btn-circle btn-xs bg-warning absolute z-10 top-2 left-2"></div>
+    <div class="inline-block w-8 h-8 bg-info border-none rounded-full {htmlClass} tooltip" data-tip="Post is published, but not the actual draft version."></div>
 {/if}
+
+<style>
+    div {
+        border-radius: 9999;
+    }
+</style>
