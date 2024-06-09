@@ -182,7 +182,7 @@
         and create your first post.
     </p>
     <h3>I hope you will have fun with it, ENJOY! :)</h3> -->
-{#if publishedContent}
+{#if !$user && publishedContent}
     <Text bind:str={publishedContent} />
 {/if}
 
