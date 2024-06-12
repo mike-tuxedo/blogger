@@ -57,3 +57,17 @@ If you just downloaded the zip and unzipped it to your php-server, than just dow
 
 ### Installed by gitrepo
 Just take a copy of content folder, pull changes and copy back your prevous backed up content folder, because `git pull` will overwrite the content folder.
+
+#### Todos
+
+1.  Add real login, check if account exist and add admin if not.
+2.  Implement a category system
+3.  Add themechanger
+4.  Overwrite Images with the same name on the server, instead of uploading it multiple times
+5.  Implement a search function
+6.  Check if no posts are available, check if an user exists, if not show modal to switch to login page and create user.
+7.  Enhance Settings
+    1.  Save additional metatags
+    2.  Add switch themes function
+    3.  Add posibility for custom css
+    4.  Check how to switch between php and nodejs api

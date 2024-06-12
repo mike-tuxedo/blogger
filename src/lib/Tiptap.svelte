@@ -11,6 +11,8 @@
     import Dropcursor from "@tiptap/extension-dropcursor";
     import Placeholder from "@tiptap/extension-placeholder";
     import Image from "@tiptap/extension-image";
+    import History from "@tiptap/extension-history";
+    import Link from "@tiptap/extension-link";
     import CustomTiptapYoutube from "$lib/CustomTiptapYoutube.js";
     import CustomTiptapImage from "$lib/CustomTipTapImage.js";
     import { baseurl } from "$lib/store.js";
@@ -27,6 +29,9 @@
     let changedCount = 1;
     let containerY = 0;
     let mouseY = 0;
+    let url = "";
+    let urlModal;
+    let urlInput;
 
     const allowedMimeTypes = [
         "image/jpeg",
@@ -64,6 +69,12 @@
                     placeholder:
                         "Now free your mind - start typing, drag n drop an image or paste a youtube link!",
                 }),
+                Link.configure({
+                    openOnClick: false,
+                    HTMLAttributes: {
+                        target: null,
+                    },
+                }),
             ],
             content: content,
             onUpdate: ({ editor }) => {
@@ -79,7 +90,7 @@
     });
 
     onDestroy(() => {
-        console.log('destroy tiptap?', editorElement);
+        console.log("destroy tiptap?", editorElement);
         if (editor) {
             editor.destroy();
         }
@@ -124,6 +135,7 @@
                     "OL",
                     "LI",
                     "EM",
+                    "A"
                 ].includes(target.tagName)
             ) {
                 selectedParagraph = target;
@@ -208,7 +220,7 @@
             return;
         }
 
-        console.log(file.type)
+        console.log(file.type);
 
         const formData = new FormData();
         formData.append("file", file);
@@ -307,11 +319,65 @@
         selectedParagraph = null;
     }
 
+    function showUrlModal() {
+        urlModal.show();
+
+        const previousUrl = editor.getAttributes("link").href;
+        url = previousUrl;
+        console.log(selectedParagraph);
+
+        urlInput.focus();
+    }
+
+    function setLink() {
+        // cancelled
+        if (url === null) {
+            return;
+        }
+
+        // empty
+        if (url === "") {
+            editor
+                .chain()
+                .focus()
+                .extendMarkRange("link")
+                .unsetLink()
+                .run();
+
+            return;
+        }
+
+        // update link
+        editor
+            .chain()
+            .focus()
+            .extendMarkRange("link")
+            .setLink({ href: url })
+            .run();
+
+        if (url) {
+            editor
+                .chain()
+                .focus()
+                .extendMarkRange("link")
+                .setLink({ href: url })
+                .run();
+            url = ""; // Clear the input after setting the link
+        }
+        changedCount++;
+        urlModal.close();
+    }
+
+    function unsetLink() {
+        editor.chain().focus().unsetLink().run();
+        changedCount++;
+    }
+
     let controlsWidth;
     let controlsHeight;
     let textControls;
     let imageControls;
-    let controlsOffset = 80;
+    let controlsOffset = 120;
     $: if (textControls) {
         controlsWidth = `${textControls.clientWidth}px`;
         controlsHeight = `${textControls.clientHeight}px`;
@@ -474,10 +540,20 @@
             >
                 <Icon name="horizontal-rule" />
             </button>
+
+            <button
+                on:click={showUrlModal}
+            >
+                Link
+            </button>
+            <button on:click={unsetLink} disabled={!editor?.isActive("link")}>
+                Unlink
+            </button>
+
             <button class="relative">
-                <Icon name="image"/>
+                <Icon name="image" />
                 <input
-                class="absolute w-full h-full top-0 left-0 opacity-0"
+                    class="absolute w-full h-full top-0 left-0 opacity-0"
                     type="file"
                     accept="image/*"
                     on:change={(event) => handleUpload(event)}
@@ -551,4 +627,33 @@
     {/if}
 
     <div bind:this={editorElement} class="tiptap-editor"></div>
+
+    <dialog class="modal" bind:this={urlModal}>
+        <div class="modal-box">
+            <form method="dialog">
+                <button
+                    class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                    >✕</button
+                >
+            </form>
+
+            <label class="form-control w-full">
+                <div class="label">
+                    <span class="label-text">Link</span>
+                </div>
+                <input
+                    type="text"
+                    bind:value={url}
+                    bind:this={urlInput}
+                    placeholder="Enter URL"
+                    class="input input-bordered"
+                />
+            </label>
+            <div class="modal-action">
+                <form method="dialog">
+                    <button class="btn" on:click={setLink}>Set</button>
+                </form>
+            </div>
+        </div>
+    </dialog>
 </div>

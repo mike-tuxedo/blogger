@@ -79,8 +79,6 @@ html body {
         width: 100%;
     }
 
-    blockquote {}
-
     textarea {
         resize: none;
         margin: 0;
@@ -105,9 +103,53 @@ html body {
         }
     }
 
-    /** Loggedin styling */
+    /** ANCHOR Texteditor */
+    .tiptap {
+        outline: none;
+        position: relative;
+
+        iframe {
+            pointer-events: none;
+            cursor: pointer;
+        }
+
+        img {
+            cursor: pointer;
+        }
+
+        p.is-editor-empty:first-child::before {
+            color: #adb5bd;
+            content: attr(data-placeholder);
+            float: left;
+            height: 0;
+            pointer-events: none;
+        }
+    }
+
+    /** ANCHOR Tiptap toolbar */
+    .tiptap-controls {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        background: rgba(255, 255, 255, 1);
+        border: 1px solid #ccc;
+        border-radius: 14px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+        z-index: 100;
+        overflow: hidden;
+
+        button {
+            padding: 10px;
+
+            &:hover {
+                background: $primary;
+            }
+        }
+    }
+
+    /** ANCHOR Loggedin styling */
     &.logged-in {
-        /** ANCHOR Defaults */
         button.active {
             background: black;
             color: white;
@@ -217,53 +259,10 @@ html body {
                 }
             }
         }
-
-        /** ANCHOR Texteditor */
-        .tiptap {
-            outline: none;
-            position: relative;
-
-            iframe {
-                pointer-events: none;
-                cursor: pointer;
-            }
-
-            img {
-                cursor: pointer;
-            }
-
-            p.is-editor-empty:first-child::before {
-                color: #adb5bd;
-                content: attr(data-placeholder);
-                float: left;
-                height: 0;
-                pointer-events: none;
-            }
-        }
-
-        /** ANCHOR Tiptap toolbar */
-        .tiptap-controls {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            background: rgba(255, 255, 255, 1);
-            border: 1px solid #ccc;
-            border-radius: 14px;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
-            z-index: 100;
-            overflow: hidden;
-
-            button {
-                padding: 10px;
-
-                &:hover {
-                    background: $primary;
-                }
-            }
-        }
     }
 
+
+    /** ANCHOR Login Page */
     &.login {
         main {
             position: relative;

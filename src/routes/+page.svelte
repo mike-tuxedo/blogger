@@ -141,33 +141,6 @@
         document.body.classList.remove("post");
     });
 </script>
-<!-- 
-<h4 class="mt-6">Todos</h4>
-<ol>
-    <li>Add real login, check if account exist and add admin if not.</li>
-    <li>Implement a category system</li>
-    <li>Add themechanger</li>
-    <li>
-        Overwrite Images with the same name on the server, instead of
-        uploading it multiple times
-    </li>
-    <li>Implement a search function</li>
-    <li>
-        Check if no posts are available, check if an user exists, if not
-        show modal to switch to login page and create user.
-    </li>
-    <li>
-        Enhance Settings
-        <ol>
-            <li>Save additional metatags</li>
-            <li>Add switch themes function</li>
-            <li>Add posibility for custom css</li>
-            <li>Check how to switch between php and nodejs api</li>
-        </ol>
-    </li>
-</ol>
-<hr /> -->
-
 <!-- Backup Text -->
 <!-- <h1>Welcome to Blog Your Mind.</h1>
     <p>
@@ -183,7 +156,7 @@
     </p>
     <h3>I hope you will have fun with it, ENJOY! :)</h3> -->
 {#if !$user && publishedContent}
-    <Text bind:str={publishedContent} />
+    {@html publishedContent}
 {/if}
 
 {#if $user}
