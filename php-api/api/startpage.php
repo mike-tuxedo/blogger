@@ -5,7 +5,7 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Credentials: true");
 
-$databaseFile = "../content/database.db";
+$databaseFile = "../../content/database.db";
 $db = new SQLite3($databaseFile);
 
 if (!$db) {

@@ -1,6 +1,6 @@
 <script>
     import Dropzone from "svelte-file-dropzone";
-    import { baseurl, user } from "$lib/store.js";
+    import { baseurl, usePhpApi, user } from "$lib/store.js";
     import { fade } from "svelte/transition";
 
     export let str = "";
@@ -26,14 +26,16 @@
             loadPreview(file);
 
             try {
-                const response = await fetch(`${$baseurl}/image.php`, {
+                let url = $usePhpApi ? `${$baseurl}/api/upload.php` : `${$baseurl}/api/upload`;
+                console.log(url);
+                const response = await fetch(url, {
                     method: "POST",
                     body: formData,
                 });
 
                 if (response.ok) {
                     const data = await response.json(); // Parse JSON response
-                    console.log(data);
+                    console.log('Data', data);
                     // hier müsste gleich figure mit srcset gemacht werden
                     str = `<img class="${htmlClass}" src="uploads/300_${data.filename}" srcset="uploads/300_${data.filename} 300w, uploads/600_${data.filename} 600w, uploads/1200_${data.filename} 1200w" alt="${data.filename}" />`;
                     console.log(`${file.name} uploaded successfully`);

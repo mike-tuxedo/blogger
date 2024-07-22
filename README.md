@@ -60,11 +60,12 @@ Just take a copy of content folder, pull changes and copy back your prevous back
 
 #### Todos
 
-1.  Add real login, check if account exist and add admin if not.
+1.  Add node server
+2.  Add real login, check if account exist and add admin if not.
 2.  Implement a category system
 3.  Add themechanger
 4.  Overwrite Images with the same name on the server, instead of uploading it multiple times
-5.  Implement a search function
+5.  Implement real search with server results
 6.  Check if no posts are available, check if an user exists, if not show modal to switch to login page and create user.
 7.  Enhance Settings
     1.  Save additional metatags

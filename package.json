@@ -5,6 +5,8 @@
 		"dev-php": "vite dev & php -S 127.0.0.1:8080 -t php-api",
 		"dev": "vite dev",
 		"build": "vite build && npm run package",
+		"build-node": "ADAPTER=node vite build --config vite.config.node.js",
+    	"build-php": "ADAPTER=static vite build --config vite.config.php.js",
 		"preview-php": "vite preview & php -S 127.0.0.1:8080 -t php-api",
 		"preview": "vite preview",
 		"package": "svelte-kit sync && svelte-package && publint",
@@ -28,7 +30,6 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
-		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/package": "^2.0.0",
 		"autoprefixer": "^10.4.19",
 		"daisyui": "^4.11.1",
@@ -48,8 +49,9 @@
 	"types": "./dist/index.d.ts",
 	"type": "module",
 	"dependencies": {
-		"@sveltejs/adapter-node": "^5.0.1",
+		"@sveltejs/adapter-node": "^5.1.0",
 		"@sveltejs/adapter-static": "^3.0.1",
+		"@sveltejs/kit": "^2.5.15",
 		"@tailwindcss/typography": "^0.5.13",
 		"@tiptap/core": "^2.3.1",
 		"@tiptap/extension-blockquote": "^2.3.1",
@@ -66,10 +68,16 @@
 		"@tiptap/pm": "^2.3.0",
 		"@tiptap/starter-kit": "^2.3.1",
 		"bigger-picture": "^1.1.16",
+		"fs-extra": "^11.2.0",
 		"highlight.js": "^11.9.0",
 		"lowlight": "^3.1.0",
+		"multer": "^1.4.5-lts.1",
 		"sass": "^1.75.0",
+		"sharp": "^0.33.4",
+		"sqlite": "^5.1.1",
+		"sqlite3": "^5.1.7",
 		"svelte-file-dropzone": "^2.0.7",
-		"svelte-legos": "^0.2.2"
+		"svelte-legos": "^0.2.2",
+		"webp-converter": "^2.3.3"
 	}
 }

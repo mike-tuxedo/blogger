@@ -1,7 +1,7 @@
 <script>
     import Tableview from "$lib/Tableview.svelte";
     import Indicator from "$lib/Indicator.svelte";
-    import { user, baseurl, postsView } from "$lib/store.js";
+    import { user, baseurl, postsView, usePhpApi } from "$lib/store.js";
     import { onMount } from "svelte";
     import { getState, toReadableDate } from "$lib/utils.js";
     import { slide } from "svelte/transition";
@@ -17,13 +17,30 @@
     let tableview = $postsView === "table";
     $: $postsView = tableview ? "table" : "grid";
 
-    console.log(data);
+    const startpageDefault = `<h1>Welcome to Blog Your Mind.</h1>
+<p>
+    This is your startpage and the content you are reading is editable.
+    Just go to your login page under <strong><em>https://your-domain-that-i-cant.know/login</em></strong> and setup your
+    admin profile and than come back here and start editing
+    this content as you like.
+</p>
+<p>
+    Under this content you will find your posts. Just click on the plus
+    and create your first post.
+</p>
+<h3>I hope you will have fun with it, ENJOY! :)</h3>`;
 
     /** Start content */
     let metatitle = data.startpage ? data.startpage.metatitle : "";
     let metadescription = data.startpage ? data.startpage.metadescription : "";
     let theme = data.startpage ? data.startpage.theme : "";
-    let draftContent = data.startpage ? data.startpage.draftContent : "";
+
+    console.log($usePhpApi);
+    
+    console.log(data.startpage);
+    console.log(data.posts);
+
+    let draftContent = data.startpage && data.startpage.draftContent ? data.startpage.draftContent : startpageDefault;
     let publishedContent = data.startpage
         ? data.startpage.publishedContent
         : "";
@@ -43,7 +60,10 @@
         };
 
         try {
-            const response = await fetch(`${$baseurl}/startpage.php`, {
+            let url = '/api/startpage';
+            if ($usePhpApi) url += '.php';
+            console.log(url);
+            const response = await fetch(url, {
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -89,7 +109,9 @@
         };
 
         try {
-            const response = await fetch(`${$baseurl}/post.php`, {
+            let url = '/api/post';
+            if ($usePhpApi) url += '.php';
+            const response = await fetch(`${$baseurl}${url}`, {
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -141,24 +163,10 @@
         document.body.classList.remove("post");
     });
 </script>
-<!-- Backup Text -->
-<!-- <h1>Welcome to Blog Your Mind.</h1>
-    <p>
-        This is your startpage and the content you are reading is editable.
-        Just go to your login page under <strong
-        ><em>https://your-domain-that-i-cant.know/login</em></strong
-        > and setup your admin profile and than come back here and start editing
-        this content as you like.
-    </p>
-    <p>
-        Under this content you will find your posts. Just click on the plus
-        and create your first post.
-    </p>
-    <h3>I hope you will have fun with it, ENJOY! :)</h3> -->
+
 {#if !$user && publishedContent}
     {@html publishedContent}
 {/if}
-
 {#if $user}
     {#if draftContent}
         <Text bind:str={draftContent} />

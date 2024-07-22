@@ -2,7 +2,7 @@
     import { goto } from "$app/navigation";
     import Image from "$lib/Image.svelte";
     import Text from "$lib/Text.svelte";
-    import { user, baseurl } from "$lib/store.js";
+    import { user, baseurl, usePhpApi } from "$lib/store.js";
     import PostSettings from "$lib/PostSettings.svelte";
     import { onMount } from "svelte";
     import { hotKeyAction } from "svelte-legos";
@@ -61,7 +61,8 @@
         };
 
         try {
-            const response = await fetch(`${$baseurl}/post.php`, {
+        	let url = $usePhpApi ? `${$baseurl}/api/post.php` : `${$baseurl}/api/post`;
+            const response = await fetch(url, {
                 headers: {
                     "Content-Type": "application/json",
                 },

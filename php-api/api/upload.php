@@ -18,7 +18,7 @@ function resizeImageWithImagick($filePath, $width, $outputFilePath)
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
-    $uploadDirectory = '../content/uploads/';
+    $uploadDirectory = '../../content/uploads/';
 	$uniqueFilename = str_replace(' ', '-', $_FILES['file']['name']);
     $uploadedFilePath = $uploadDirectory . $uniqueFilename;
 

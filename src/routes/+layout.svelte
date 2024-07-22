@@ -3,8 +3,7 @@
     import "../defaultTheme.scss";
     import "../app.scss";
     import { page } from "$app/stores";
-    import { slide } from "svelte/transition";
-    import { user } from "$lib/store.js";
+    import { usePhpApi, user } from "$lib/store.js";
     import { onMount } from "svelte";
     import { onNavigate } from "$app/navigation";
 
@@ -57,7 +56,6 @@
 
 <svelte:window bind:innerWidth />
 
-{#if $user}{/if}
 {#if $page.url.pathname !== "/login"}
     <nav class="nav-main">
         <a href="/"><img src="/logo.svg" class="logo" alt="Logo" /></a>

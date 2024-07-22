@@ -44,10 +44,8 @@ module.exports = {
         ],
     },
     // Stellen Sie sicher, dass Animationen nicht durch Purge entfernt werden
-    purge: {
-        content: ['./src/**/*.{html,svelte,js,ts}'],
-        options: {
-            safelist: ['animate-*'] // Um sicherzustellen, dass Animationsklassen erhalten bleiben
-        }
-    },
+    content: ['./src/**/*.{html,svelte,js,ts}'],
+    options: {
+        safelist: ['animate-*'] // Um sicherzustellen, dass Animationsklassen erhalten bleiben
+    }
 };

@@ -15,7 +15,7 @@
     import Link from "@tiptap/extension-link";
     import CustomTiptapYoutube from "$lib/CustomTiptapYoutube.js";
     import CustomTiptapImage from "$lib/CustomTipTapImage.js";
-    import { baseurl } from "$lib/store.js";
+    import { baseurl, usePhpApi } from "$lib/store.js";
     import Icon from "./Icon.svelte";
     import { clickOutsideAction } from "svelte-legos";
 
@@ -226,7 +226,8 @@
         formData.append("file", file);
 
         try {
-            const response = await fetch(`${$baseurl}/image.php`, {
+            let url = $usePhpApi ? `${$baseurl}/api/upload.php` : `${$baseurl}/api/upload`;
+            const response = await fetch(url, {
                 method: "POST",
                 body: formData,
             });
